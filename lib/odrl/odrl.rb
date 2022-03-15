@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
-require_relative "ruby/version"
+require_relative "odrl/version"
 
-module Odrl
-  module Ruby
+module ODRL
     class Error < StandardError; end
     # Your code goes here...
-  end
 end

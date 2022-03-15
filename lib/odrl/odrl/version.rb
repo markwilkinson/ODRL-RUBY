@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Odrl
-  module Ruby
+module ODRL
+  module ODRL
     VERSION = "0.1.0"
   end
 end
