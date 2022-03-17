@@ -3,20 +3,25 @@ require_relative "../lib/odrl/rule.rb"
 require_relative "../lib/odrl/base.rb"
 require_relative "../lib/odrl/asset.rb"
 require_relative "../lib/odrl/constraint.rb"
+require_relative "../lib/odrl/party.rb"
+require_relative "../lib/odrl/action.rb"
+
 
 
 describe ODRL::Policy do 
    context "When testing the Policy class" do 
       
       it "should create raise error without base uri" do 
+         $baseURI = nil
          expect{ODRL::Policy.new({})}.to raise_error(Exception)
       end
 
 
-      it "should accept a new title and be a policy type" do 
+      it "should accept a new title and be a policy type, including the uid" do 
          p = ODRL::Policy.new(baseURI: "https://this.is", title: "rspec test") 
          expect(p.title).to eq "rspec test"
          expect(p.type).to eq "Policy"
+         expect(p.uid).to match (/\#policy\_/)
          $baseURI = nil
       end
 

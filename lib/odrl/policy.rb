@@ -16,7 +16,7 @@ module ODRL
             super(args)
             @rules = Hash.new
             uid = Base.getuuid
-            self.uid = self.baseURI + "#" + uid.to_s
+            self.uid = self.baseURI + "#policy_" + uid.to_s
 
 
         end

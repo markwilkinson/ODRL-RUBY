@@ -2,26 +2,14 @@
 
 module ODRL
 
-    class Asset
-        attr_accessor :uid, :hasPolicy, :refinements, :partOf
-
+    class Action
+        attr_accessor :uid, :refinements, :predicate, :type
         def initialize(args)
             @uid = args[:uid]
             unless @uid
-                @uid = $baseURI + "#asset_" + Base.getuuid
+                @uid = $baseURI + "#action_" + Base.getuuid
             end
             @refinements = Hash.new
-            @partOf = args[:partOf]
-            @hasPolicy = args[:hasPolicy]
-
-            if @hasPolicy and !(@hasPolicy.is_a? Policy) # if it exists and is the wrong type
-                raise "The policy of an Asset must be of type ODRL::Policy.  The provided value will be discarded" 
-                @hasPolicy = nil
-            end
-            if @partOf and !(@partOf.is_a? AssetCollection) # if it exists and is the wrong type
-                raise "The parent collection of an Asset must be of type ODRL::AssetCollection.  The provided value will be discarded" 
-                @partOf = nil
-            end
 
             args[:refinements] = [args[:refinements]] unless args[:refinements].is_a? Array
             if !(args[:refinements].first.nil?)
@@ -29,6 +17,9 @@ module ODRL
                     self.addRefinement(refinement:  c)
                 end
             end
+
+            self.predicate = "http://www.w3.org/ns/odrl/2/action" unless self.predicate
+
         end
 
         def addRefinement(refinement: args)
@@ -40,12 +31,19 @@ module ODRL
         end
     end
 
-    class AssetCollection < Asset
 
+
+    class Use < Action 
         def initialize(args)
             super(args)
+            self.type = "http://www.w3.org/ns/odrl/2/action/use" unless self.type
         end
     end
-
+    class Transfer < Action
+        def initialize(args)
+            super(args)
+            self.type = "http://www.w3.org/ns/odrl/2/action/transfer" unless self.type
+        end
+    end
 
 end
