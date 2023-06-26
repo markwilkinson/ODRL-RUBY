@@ -14,6 +14,43 @@ ODRLV =  RDF::Vocabulary.new("http://www.w3.org/ns/odrl/2/")
 OBO = RDF::Vocabulary.new("http://purl.obolibrary.org/obo/")
 XSD = RDF::Vocabulary.new("http://www.w3.org/2001/XMLSchema#")
 
+CPOLICY= "http://www.w3.org/ns/odrl/2/Policy"
+
+CSET= "http://www.w3.org/ns/odrl/2/Set"
+COFFER= "http://www.w3.org/ns/odrl/2/Offer"
+CREQUEST= "http://www.w3.org/ns/odrl/2/Request"
+CAGREEMENT= "http://www.w3.org/ns/odrl/2/Agreement"
+
+PASSET = "http://www.w3.org/ns/odrl/2/target"
+CASSET= "http://www.w3.org/ns/odrl/2/Asset"
+
+CPERMISSION= "http://www.w3.org/ns/odrl/2/permission"
+PPERMISSION = "http://www.w3.org/ns/odrl/2/Permission"
+CPROHIBITION= "http://www.w3.org/ns/odrl/2/prohibition"
+PPROHIBITION = "http://www.w3.org/ns/odrl/2/Prohibition"
+CDUTY= "http://www.w3.org/ns/odrl/2/obligation"
+PDUTY = "http://www.w3.org/ns/odrl/2/Duty"
+PRULE = "http://www.w3.org/ns/odrl/2/Rule"
+
+
+PACTION = "http://www.w3.org/ns/odrl/2/action"
+CACTION= "http://www.w3.org/ns/odrl/2/Action"
+
+PREFINEMENT = "http://www.w3.org/ns/odrl/2/refinement"
+
+PASSIGNER = "http://www.w3.org/ns/odrl/2/assigner"
+PASSIGNEE =  "http://www.w3.org/ns/odrl/2/assignee"
+
+PPARTY = "http://www.w3.org/ns/odrl/2/constraint"
+CPARTYx= "http://www.w3.org/ns/odrl/2/Constraint"
+
+PCONSTRAINT = "http://www.w3.org/ns/odrl/2/constraint"
+CCONSTRAINT = "http://www.w3.org/ns/odrl/2/Constraint"
+PLEFT = "http://www.w3.org/ns/odrl/2/leftOperand"
+PRIGHT = "http://www.w3.org/ns/odrl/2/rightOperand"
+POPERATOR = "http://www.w3.org/ns/odrl/2/operator"
+
+
 
 class Base
         

@@ -20,7 +20,7 @@ describe ODRL::Policy do
       it "should accept a new title and be a policy type, including the uid" do 
          p = ODRL::Policy.new(baseURI: "https://this.is", title: "rspec test") 
          expect(p.title).to eq "rspec test"
-         expect(p.type).to eq "Policy"
+         expect(p.type).to eq CPOLICY
          expect(p.uid).to match (/\#policy\_/)
          $baseURI = nil
       end
@@ -43,7 +43,7 @@ describe ODRL::Policy do
       it "should init as an agreement" do 
          p = ODRL::Agreement.new(title: "test1", author: "test2", baseURI: "http://abc.def") 
          type = p.type 
-         expect(type).to eq "Agreement"
+         expect(type).to eq CAGREEMENT
       end
       
       

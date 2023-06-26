@@ -22,38 +22,45 @@ module ODRL
         end
         def addDuty(rule:)
             uid = rule.uid
-            self.rules[uid] = ["obligation", rule] 
+            self.rules[uid] = [POBLIGATION, rule] 
         end
 
         def addPermission(rule:)
             uid = rule.uid
-            self.rules[uid] = ["permission", rule] 
+            self.rules[uid] = [PPERMISSION, rule] 
 
         end
 
         def addProhibition(rule:)
             uid = rule.uid
-            self.rules[uid] = ["prohibition", rule] 
+            self.rules[uid] = [PPROHIBITION, rule] 
         end
     end
 
     class Set  < Policy
         def initialize(args)
-            super({type: "Set"}.merge(args))
+            super({type: CSET}.merge(args))
         end
 
     end
 
     class Offer  < Set
         def initialize(args)
-            super({type: "Offer"}.merge(args))
+            super({type: COFFER}.merge(args))
 
 
         end
     end
     class Agreement  < Set
         def initialize(args)
-            super({type: "Agreement"}.merge(args))
+            super({type: CAGREEMENT}.merge(args))
+
+
+        end
+    end
+    class Request  < Set
+        def initialize(args)
+            super({type: CREQUEST}.merge(args))
 
 
         end
