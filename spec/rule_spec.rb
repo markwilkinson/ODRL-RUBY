@@ -6,7 +6,7 @@ require_relative "../lib/odrl/constraint.rb"
 require_relative "../lib/odrl/party.rb"
 require_relative "../lib/odrl/action.rb"
 
-
+$baseURI = "http://example.org/"
 describe ODRL::Rule do 
    context "When testing the Rule class" do 
       

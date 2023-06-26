@@ -18,7 +18,7 @@ module ODRL
                 end
             end
 
-            self.predicate = "http://www.w3.org/ns/odrl/2/action" unless self.predicate
+            self.predicate = PACTION unless self.predicate
 
         end
 
@@ -26,7 +26,7 @@ module ODRL
             unless refinement.is_a?(Constraint)
                 raise "Refinement is not an ODRL Constraint" 
             else
-                self.refinements[refinement.uid] = ["refinement", refinement] 
+                self.refinements[refinement.uid] = [PREFINEMENT, refinement] 
             end
         end
     end

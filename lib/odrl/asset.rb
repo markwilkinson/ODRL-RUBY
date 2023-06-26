@@ -35,7 +35,7 @@ module ODRL
             unless refinement.is_a?(Constraint)
                 raise "Refinement is not an ODRL Constraint" 
             else
-                self.refinements[refinement.uid] = ["refinement", refinement] 
+                self.refinements[refinement.uid] = [PREFINEMENT, refinement] 
             end
         end
     end

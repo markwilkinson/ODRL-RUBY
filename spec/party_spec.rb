@@ -12,11 +12,11 @@ describe ODRL::Party do
       
       it "should init the right class and know its ontological type" do 
          $baseURI = "http://example.org" unless $baseURI
-         p = ODRL::Party.new({predicate: "assigner"})
+         p = ODRL::Party.new({predicate: PASSIGNER})
          expect(p.class).to be (ODRL::Party)
          expect(p.uid).to match (/\#party\_/)
          expect(p.type).to eq ("http://www.w3.org/ns/odrl/2/Party")
-         p = ODRL::PartyCollection.new({predicate: "assigner"})
+         p = ODRL::PartyCollection.new({predicate: PASSIGNER})
          expect(p.class).to be (ODRL::PartyCollection)
          expect(p.uid).to match (/\#party\_/)
          expect(p.type).to eq ("http://www.w3.org/ns/odrl/2/PartyCollection")
@@ -27,11 +27,11 @@ describe ODRL::Party do
          $baseURI = "http://example.org" unless $baseURI
          c1 = ODRL::Constraint.new({})
          c2 = ODRL::Constraint.new({})
-         d = ODRL::Party.new({predicate: "assigner", refinements: c1})
+         d = ODRL::Party.new({predicate: PASSIGNER, refinements: c1})
          expect(d.class.to_s).to eq "ODRL::Party"
-         d = ODRL::Party.new(predicate: "assigner", refinements: [c1])
+         d = ODRL::Party.new(predicate: PASSIGNER, refinements: [c1])
          expect(d.class.to_s).to eq "ODRL::Party"
-         d = ODRL::Party.new(predicate: "assigner", refinements: [c1,c2])
+         d = ODRL::Party.new(predicate: PASSIGNEE, refinements: [c1,c2])
          expect(d.refinements.keys.length).to eq 2
       end
 
@@ -39,14 +39,14 @@ describe ODRL::Party do
       it "should allow adding constraints by method call" do 
          $baseURI = "http://example.org" unless $baseURI
          c1 = ODRL::Constraint.new({})
-         d = ODRL::Party.new({predicate: "assigner"})
+         d = ODRL::Party.new({predicate: PASSIGNER})
          d.addRefinement(refinement: c1)
          expect(d.refinements.keys.length).to eq 1
       end
 
       it "a PartyCollection should init the right class and be an Party also" do 
          $baseURI = "http://example.org" unless $baseURI
-         p = ODRL::PartyCollection.new({predicate: "assigner"})
+         p = ODRL::PartyCollection.new({predicate: PASSIGNER})
          expect(p.class).to be (ODRL::PartyCollection)
          expect(p.uid).to match (/\#party\_/)
          expect(p.is_a? ODRL::PartyCollection).to be (true)
@@ -55,8 +55,8 @@ describe ODRL::Party do
 
       it "a Party should allow to be part of an PartyCollection" do 
          $baseURI = "http://example.org" unless $baseURI
-         ac = ODRL::PartyCollection.new({predicate: "assigner"})
-         a = ODRL::Party.new({predicate: "assigner", partOf: ac})
+         ac = ODRL::PartyCollection.new({predicate: PASSIGNER})
+         a = ODRL::Party.new({predicate: PASSIGNER, partOf: ac})
          expect(a.partOf.class).to be (ODRL::PartyCollection)
       end
 
@@ -70,8 +70,8 @@ describe ODRL::Party do
          $baseURI = "http://example.org" unless $baseURI
          expect{ODRL::Party.new({})}.to raise_error(Exception)
          expect{ODRL::PartyCollection.new({})}.to raise_error(Exception)
-         p = ODRL::PartyCollection.new({predicate: "assignee"})
-         expect(p.predicate).to eq "http://www.w3.org/ns/odrl/2/assignee"
+         p = ODRL::PartyCollection.new({predicate: PASSIGNEE})
+         expect(p.predicate).to eq PASSIGNEE
          expect{ODRL::PartyCollection.new({predicate: "somethignelse"})}.to raise_error(Exception)
       end
 

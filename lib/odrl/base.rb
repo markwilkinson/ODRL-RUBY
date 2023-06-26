@@ -30,6 +30,7 @@ CPROHIBITION= "http://www.w3.org/ns/odrl/2/prohibition"
 PPROHIBITION = "http://www.w3.org/ns/odrl/2/Prohibition"
 CDUTY= "http://www.w3.org/ns/odrl/2/obligation"
 PDUTY = "http://www.w3.org/ns/odrl/2/Duty"
+
 PRULE = "http://www.w3.org/ns/odrl/2/Rule"
 
 
@@ -40,9 +41,7 @@ PREFINEMENT = "http://www.w3.org/ns/odrl/2/refinement"
 
 PASSIGNER = "http://www.w3.org/ns/odrl/2/assigner"
 PASSIGNEE =  "http://www.w3.org/ns/odrl/2/assignee"
-
-PPARTY = "http://www.w3.org/ns/odrl/2/constraint"
-CPARTYx= "http://www.w3.org/ns/odrl/2/Constraint"
+CPARTY= "http://www.w3.org/ns/odrl/2/Party"
 
 PCONSTRAINT = "http://www.w3.org/ns/odrl/2/constraint"
 CCONSTRAINT = "http://www.w3.org/ns/odrl/2/Constraint"
@@ -61,19 +60,14 @@ class Base
         args = defaults.merge(args)
         @title = args[:title]
         @author = args[:author]
-        @baseURI = args[:baseURI]
+        @baseURI = args[:baseURI] || $baseURI
         @uid = args[:uid]
         @type = args[:type]
 
-        if $baseURI
-                @baseURI = $baseURI 
-        end
 
         begin
                 raise "Must have a base URI to start... cannot continue"  unless self.baseURI
         end
-
-        $baseURI = @baseURI  # set it for all objects
 
         $g = RDF::Graph.new()
         $writer = get_writer(type: :jsonld)  # set it by default

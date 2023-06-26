@@ -35,7 +35,7 @@ module ODRL
                 raise "Asset is not an ODRL Asset" 
             else
                 uid = asset.uid
-                self.assets[uid] = ["target", asset] 
+                self.assets[uid] = [PASSET, asset] 
             end
         end
 
@@ -43,7 +43,7 @@ module ODRL
             unless constraint.is_a?(Constraint)
                 raise "Constraint is not an ODRL Constraint" 
             else
-                self.constraints[constraint.uid] = ["constraint", constraint] 
+                self.constraints[constraint.uid] = [PCONSTRAINT, constraint] 
             end
         end
     end
@@ -52,8 +52,8 @@ module ODRL
     class Permission  < Rule
         def initialize(args)
             super(args)
-            self.predicate = "http://www.w3.org/ns/odrl/2/permission"
-            self.type = "http://www.w3.org/ns/odrl/2/Permission"
+            self.predicate = PPERMISSION
+            self.type = CPERMISSION
 
 
         end
@@ -62,8 +62,8 @@ module ODRL
     class Duty  < Rule
         def initialize(args)
             super(args)
-            self.predicate = "http://www.w3.org/ns/odrl/2/obligation"
-            self.type = "http://www.w3.org/ns/odrl/2/Duty"
+            self.predicate = PDUTY
+            self.type = CDUTY
 
 
         end
@@ -72,8 +72,8 @@ module ODRL
     class Prohibition < Rule
         def initialize(args)
             super(args)
-            self.predicate = "http://www.w3.org/ns/odrl/2/prohibition"
-            self.type = "http://www.w3.org/ns/odrl/2/Prohibition"
+            self.predicate = PPROHIBITION
+            self.type = CPROHIBITION
 
 
         end

@@ -9,19 +9,15 @@ module ODRL
             @refinements = Hash.new
             @partOf = args[:partOf]
             @predicate = args[:predicate]
-            @type = "http://www.w3.org/ns/odrl/2/Party"
+            @type = CPARTY
 
             unless @predicate
                 raise "If you don't indicate a predicate (assigner/assignee) we will default to assigner.  This may not be what you want!"
                 @predicate = "http://www.w3.org/ns/odrl/2/assigner"
             else
-                if @predicate == "assigner"
-                    @predicate = "http://www.w3.org/ns/odrl/2/assigner"
-                elsif @predicate == "assignee"
-                    @predicate = "http://www.w3.org/ns/odrl/2/assignee"
-                else
+                unless [PASSIGNER, PASSIGNEE].include? @predicate 
                     raise "You didn't indicate a valid predicate (assigner/assignee) so we will default to assigner.  This may not be what you want!"
-                    @predicate = "http://www.w3.org/ns/odrl/2/assigner"
+                    @predicate = PASSIGNER
                 end
             end
 
@@ -47,7 +43,7 @@ module ODRL
             unless refinement.is_a?(Constraint)
                 raise "Refinement is not an ODRL Constraint" 
             else
-                self.refinements[refinement.uid] = ["refinement", refinement] 
+                self.refinements[refinement.uid] = [PREFINEMENT, refinement] 
             end
         end
     end
