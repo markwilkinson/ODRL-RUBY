@@ -1,10 +1,8 @@
-# THIS IS NOT READY FOR USE!  ...SO DON'T!  :-)
+# THIS IS BARELY READY FOR USE!  DON'T EXPECT MIRACLES
 
 # ODRL::Ruby
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/odrl/ruby`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+This is a gem to build ODRL records, and serialize them
 
 ## Installation
 
@@ -24,17 +22,51 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```
+require 'odrl/ruby'
 
-## Development
+# an offer to toshiaki from mark to use the polyA resource during the biohackathon
 
-After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+# core annotatons are:  :title, :creator, :description, :subject :baseURI, :uid, :type
+policy = ODRL::Offer.new(
+    title: "Offer to Toshiaki-san", 
+    creator: "https://orcid.org/0000-0001-6960-357X", 
+    description: "An offer for Toshiaki-san to use the polyA data during the hackathon",
+    subject: "collaboration", # this is the CCE category - useful for EJP-RD ONLYU
+)
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+asset = ODRL::Asset.new(uid: "http://mark.wilkinson.org/data/polyA", title: "Mark's PolyA Database")
 
-## Contributing
+# you indicate the type of party by assigning the predicate (either assigner or assignee)
+# ODRLV is the RDF::Vocabulary for ODRL, exported to this namespace
+mark = ODRL::Party.new(uid: "https://orcid.org/0000-0001-6960-357X", predicate: ODRLV.assigner, title: "Mark D Wilkinson" )
+toshiaki = ODRL::Party.new(uid: "https://orcid.org/0000-0003-2391-0384", predicate: ODRLV.assignee, title: "Toshiaki Katayama")
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/odrl-ruby.
+# Rules
+permission = ODRL::Permission.new(title: "Permission to use")
+
+use = ODRL::Use.new(value: "use") # subclass of ODRL::Action
+
+# Constraints: :uid, :rightOperand, :leftOperand, :operator, :rightOperandReference, :dataType, :unit, :status
+constraint = ODRL::Constraint.new(
+    title: "Only during the hackathon",
+    leftOperand: "event",
+    operator: "eq",
+    rightOperand: "https://2023.biohackathon.org"
+)
+permission.addConstraint(constraint: constraint)
+permission.addAsset(asset: asset)
+permission.addAssigner(party: toshiaki)
+permission.addAssignee(party: mark)
+permission.addAction(action: use)
+
+policy.addPermission(rule: permission)
+
+policy.load_graph  # this brings the triples into memory, cascading down all objects conneted to "policuy"
+result = policy.serialize(format: 'turtle')  # get the RDF string
+puts result
+```
+
 
 ## License
 
