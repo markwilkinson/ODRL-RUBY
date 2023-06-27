@@ -1,17 +1,12 @@
-require_relative "../lib/odrl/policy.rb"
-require_relative "../lib/odrl/rule.rb"
-require_relative "../lib/odrl/base.rb"
-require_relative "../lib/odrl/asset.rb"
-require_relative "../lib/odrl/constraint.rb"
-require_relative "../lib/odrl/party.rb"
-require_relative "../lib/odrl/action.rb"
+require_relative "./spec_helper.rb"
+
 
 
 describe ODRL::Constraint do 
    context "When testing the Constraint class" do 
       
       it "should init the right class" do 
-         p = ODRL::Constraint.new({})
+         p = ODRL::Constraint.new(leftOperand: "event", rightOperand: "http://biohack.org", operator: "eq")
          expect(p.class).to be (ODRL::Constraint)
          expect(p.uid).to match (/\#constraint\_/)
       end
@@ -31,8 +26,8 @@ describe ODRL::Constraint do
                                  leftOperand: "https://example.org/thing", 
                                  operator: "eq"})
          p.load_graph
-         result = p.serialize
-         expect(result.length).to eq 568
+         result = p.serialize(format: :turtle)
+         expect(result.length).to eq 484
       end
 
    end

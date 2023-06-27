@@ -65,7 +65,7 @@ module ODRL
             triplify(subject, predicate, object, repo)
         end
 
-        def serialize
+        def serialize(format:)
             super
         end
 

@@ -1,10 +1,5 @@
-require_relative "../lib/odrl/policy.rb"
-require_relative "../lib/odrl/rule.rb"
-require_relative "../lib/odrl/base.rb"
-require_relative "../lib/odrl/asset.rb"
-require_relative "../lib/odrl/constraint.rb"
-require_relative "../lib/odrl/party.rb"
-require_relative "../lib/odrl/action.rb"
+require_relative "./spec_helper.rb"
+
 
 
 
@@ -28,14 +23,14 @@ describe ODRL::Policy do
       it "should accept full init" do 
          p = ODRL::Set.new(      
             title: "test1",
-            author: "test2",
+            creator: "test2",
             baseURI: "http://abc.def",
          ) 
          title = p.title 
-         author = p.author
+         creator = p.creator
          baseURI = p.baseURI
          expect(title).to eq "test1"
-         expect(author).to eq "test2"
+         expect(creator).to eq "test2"
          expect(baseURI).to eq "http://abc.def"
       end
 
@@ -62,8 +57,8 @@ describe ODRL::Policy do
          pro = ODRL::Prohibition.new({})
          p.addProhibition(rule: pro)
          p.load_graph
-         result = p.serialize
-         expect(result.length).to eq 876
+         result = p.serialize(format: :turtle)
+         expect(result.length).to eq 553
       end
 
 

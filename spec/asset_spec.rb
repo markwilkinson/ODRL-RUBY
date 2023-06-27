@@ -1,10 +1,5 @@
-require_relative "../lib/odrl/policy.rb"
-require_relative "../lib/odrl/rule.rb"
-require_relative "../lib/odrl/base.rb"
-require_relative "../lib/odrl/asset.rb"
-require_relative "../lib/odrl/constraint.rb"
-require_relative "../lib/odrl/party.rb"
-require_relative "../lib/odrl/action.rb"
+require_relative "./spec_helper.rb"
+
 
 $baseURI = "http://example.org"
 
@@ -50,8 +45,8 @@ describe ODRL::Asset do
 
 
       it "should allow adding refinements, either as a single, or as an array" do 
-         c1 = ODRL::Constraint.new({})
-         c2 = ODRL::Constraint.new({})
+         c1 = ODRL::Constraint.new(leftOperand: "event", rightOperand: "http://biohack.org", operator: "eq")
+         c2 = ODRL::Constraint.new(leftOperand: "event", rightOperand: "http://biohack.org", operator: "eq")
          d = ODRL::Asset.new({refinements: c1})
          expect(d.class.to_s).to eq "ODRL::Asset"
          d = ODRL::Asset.new(refinements: [c1])
@@ -62,7 +57,7 @@ describe ODRL::Asset do
 
 
       it "should allow adding constraints by method call" do 
-         c1 = ODRL::Constraint.new({})
+         c1 = ODRL::Constraint.new(leftOperand: "event", rightOperand: "http://biohack.org", operator: "eq")
          d = ODRL::Asset.new({})
          d.addRefinement(refinement: c1)
          expect(d.refinements.keys.length).to eq 1
@@ -76,8 +71,8 @@ describe ODRL::Asset do
          d = ODRL::Asset.new({})
          d.addRefinement(refinement: p)
          d.load_graph
-         result = d.serialize
-         expect(result.length).to eq 955
+         result = d.serialize(format: :turtle)
+         expect(result.length).to eq 751
       end
 
 

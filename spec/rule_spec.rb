@@ -1,10 +1,7 @@
-require_relative "../lib/odrl/policy.rb"
-require_relative "../lib/odrl/rule.rb"
-require_relative "../lib/odrl/base.rb"
-require_relative "../lib/odrl/asset.rb"
-require_relative "../lib/odrl/constraint.rb"
-require_relative "../lib/odrl/party.rb"
-require_relative "../lib/odrl/action.rb"
+
+require_relative "./spec_helper.rb"
+
+
 
 $baseURI = "http://example.org/"
 describe ODRL::Rule do 
@@ -31,8 +28,8 @@ describe ODRL::Rule do
       end
 
       it "should allow adding constraints, either as a single, or as an array" do 
-         c1 = ODRL::Constraint.new({})
-         c2 = ODRL::Constraint.new({})
+         c1 = ODRL::Constraint.new(leftOperand: "event", rightOperand: "http://biohack.org", operator: "eq")
+         c2 = ODRL::Constraint.new(leftOperand: "event", rightOperand: "http://biohack.org", operator: "eq")
          d = ODRL::Duty.new({constraints: c1})
          expect(d.class.to_s).to eq "ODRL::Duty"
          d = ODRL::Duty.new(constraints: [c1])
@@ -41,7 +38,7 @@ describe ODRL::Rule do
          expect(d.constraints.keys.length).to eq 2
       end
       it "should allow adding constraints by method call" do 
-         c1 = ODRL::Constraint.new({})
+         c1 = ODRL::Constraint.new(leftOperand: "event", rightOperand: "http://biohack.org", operator: "eq")
          d = ODRL::Duty.new({})
          d.addConstraint(constraint: c1)
          expect(d.constraints.keys.length).to eq 1
@@ -59,8 +56,8 @@ describe ODRL::Rule do
          d = ODRL::Duty.new({})
          d.addAsset(asset: c1)
          d.load_graph
-         result = d.serialize
-         expect(result.length).to eq 630
+         result = d.serialize(format: :turtle)
+         expect(result.length).to eq 490
       end
 
    end
