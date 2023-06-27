@@ -2,47 +2,47 @@
 
 require_relative "odrl/version"
 
-# one day move these all to ODRLV.xxxx
-CPOLICY= "http://www.w3.org/ns/odrl/2/Policy"
 
-CSET= "http://www.w3.org/ns/odrl/2/Set"
-COFFER= "http://www.w3.org/ns/odrl/2/Offer"
-CREQUEST= "http://www.w3.org/ns/odrl/2/Request"
-CAGREEMENT= "http://www.w3.org/ns/odrl/2/Agreement"
+CPOLICY= ODRLV.Policy.to_s
 
-PASSET = "http://www.w3.org/ns/odrl/2/target"
-CASSET= "http://www.w3.org/ns/odrl/2/Asset"
+CSET= ODRLV.Set.to_s
+COFFER= ODRLV.Offer.to_s
+CREQUEST= ODRLV.Request.to_s
+CAGREEMENT= ODRLV.Agreement.to_s
+CPRIVACY= ODRLV.Privacy.to_s
+PASSET = ODRLV.target.to_s
+CASSET= ODRLV.Asset.to_s
 
-CPERMISSION= "http://www.w3.org/ns/odrl/2/Permission"
-PPERMISSION = "http://www.w3.org/ns/odrl/2/permission"
-CPROHIBITION= "http://www.w3.org/ns/odrl/2/Prohibition"
-PPROHIBITION = "http://www.w3.org/ns/odrl/2/prohibition"
-PDUTY= "http://www.w3.org/ns/odrl/2/obligation"
-CDUTY = "http://www.w3.org/ns/odrl/2/Duty"
+CPERMISSION= ODRLV.Permission.to_s
+PPERMISSION = ODRLV.permission.to_s
+CPROHIBITION= ODRLV.Prohibition.to_s
+PPROHIBITION = ODRLV.prohibition.to_s
+PDUTY= ODRLV.obligation.to_s
+CDUTY = ODRLV.Duty.to_s
 
-PRULE = "http://www.w3.org/ns/odrl/2/Rule"
+PRULE = ODRLV.Rule.to_s
 
 
-PACTION = "http://www.w3.org/ns/odrl/2/action"
-CACTION= "http://www.w3.org/ns/odrl/2/Action"
+PACTION = ODRLV.action.to_s
+CACTION= ODRLV.Action.to_s
 
-PREFINEMENT = "http://www.w3.org/ns/odrl/2/refinement"
+PREFINEMENT = ODRLV.refinement.to_s
 
-PASSIGNER = "http://www.w3.org/ns/odrl/2/assigner"
-PASSIGNEE =  "http://www.w3.org/ns/odrl/2/assignee"
-CPARTY= "http://www.w3.org/ns/odrl/2/Party"
+PASSIGNER = ODRLV.assigner.to_s
+PASSIGNEE =  ODRLV.assignee.to_s
+CPARTY= ODRLV.Party.to_s
 
-PCONSTRAINT = "http://www.w3.org/ns/odrl/2/constraint"
-CCONSTRAINT = "http://www.w3.org/ns/odrl/2/Constraint"
-PLEFT = "http://www.w3.org/ns/odrl/2/leftOperand"
-PRIGHT = "http://www.w3.org/ns/odrl/2/rightOperand"
-POPERATOR = "http://www.w3.org/ns/odrl/2/operator"
-POPERANDREFERENCE = "http://www.w3.org/ns/odrl/2/rightOperandReference"
-PDATATYPE = "http://www.w3.org/ns/odrl/2/dataType"
-PUNIT = "http://www.w3.org/ns/odrl/2/unit"
-PSTATUS = "http://www.w3.org/ns/odrl/2/status"
+PCONSTRAINT = ODRLV.constraint.to_s
+CCONSTRAINT = ODRLV.Constraint.to_s
+PLEFT = ODRLV.leftOperand.to_s
+PRIGHT = ODRLV.rightOperand.to_s
+POPERATOR = ODRLV.operator.to_s
+POPERANDREFERENCE = ODRLV.rightOperandReference.to_s
+PDATATYPE = ODRLV.dataType.to_s
+PUNIT = ODRLV.unit.to_s
+PSTATUS = ODRLV.status.to_s
 
-PPARTOF = "http://www.w3.org/ns/odrl/2/partOf"
+PPARTOF = ODRLV.partOf.to_s
 
 
 PROPERTIES = {

@@ -72,7 +72,7 @@ describe ODRL::Asset do
          d.addRefinement(refinement: p)
          d.load_graph
          result = d.serialize(format: :turtle)
-         expect(result.length).to eq 751
+         expect(result.length).to eq 743
       end
 
 

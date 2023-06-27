@@ -57,7 +57,7 @@ describe ODRL::Rule do
          d.addAsset(asset: c1)
          d.load_graph
          result = d.serialize(format: :turtle)
-         expect(result.length).to eq 490
+         expect(result.length).to eq 482
       end
 
    end

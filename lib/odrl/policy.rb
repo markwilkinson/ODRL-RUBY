@@ -73,6 +73,11 @@ module ODRL
             super({type: CREQUEST}.merge(args))
         end
     end
+    class Privacy  < Set
+        def initialize(args)
+            super({type: CPRIVACY}.merge(args))
+        end
+    end
 # ====================================================
 
 

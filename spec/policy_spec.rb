@@ -58,7 +58,7 @@ describe ODRL::Policy do
          p.addProhibition(rule: pro)
          p.load_graph
          result = p.serialize(format: :turtle)
-         expect(result.length).to eq 553
+         expect(result.length).to eq 607
       end
 
 

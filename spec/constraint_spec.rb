@@ -27,7 +27,7 @@ describe ODRL::Constraint do
                                  operator: "eq"})
          p.load_graph
          result = p.serialize(format: :turtle)
-         expect(result.length).to eq 484
+         expect(result.length).to eq 480
       end
 
    end

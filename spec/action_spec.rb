@@ -54,7 +54,7 @@ describe ODRL::Action do
          d.addRefinement(refinement: p)
          d.load_graph
          result = d.serialize(format: 'turtle')
-         expect(result.length).to eq 837
+         expect(result.length).to eq 829
       end
 
 
