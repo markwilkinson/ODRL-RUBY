@@ -49,10 +49,11 @@ PROPERTIES = {
         title: DCT.title,
         creator: DCT.creator,
         description: DCT.description,
-        uid: DCT.identifier,
+        id: DCT.identifier,
         type: RDF.type,
         subject: DCT.subject,
-        uid: ODRLV.uid
+        uid: ODRLV.uid,
+        label: RDFS.label,
 }
 
 module ODRL
@@ -60,7 +61,7 @@ module ODRL
 
         @@repository = RDF::Repository.new()
                 
-        attr_accessor :title, :creator, :description, :subject, :baseURI, :uid, :type, :label
+        attr_accessor :title, :creator, :description, :subject, :baseURI, :uid, :id, :type, :label
 
         def self.baseURI
                 return ENV['ODRL_BASEURI'] || "http://example.org"
@@ -89,6 +90,7 @@ module ODRL
                 @uid = args[:uid]
                 @type = args[:type]
                 @label = args[:label] || @title 
+                @id = args[:uid] || nil
                 #@repository = RDF::Repository.new() unless self.repository
 
                 raise "Every object must have a uid - attempt to create #{@type}" unless @uid
@@ -177,7 +179,7 @@ module ODRL
                         next if self.send(method).empty?
                         subject = self.uid
                         predicate = PROPERTIES[method]
-                        #warn "prediate #{predicate} for method #{method}"
+                        # warn "prediate #{predicate} for method #{method}"
                         object = self.send(method)
                         repo = self.repository
                         triplify(subject, predicate, object, repo)
