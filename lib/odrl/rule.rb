@@ -6,7 +6,7 @@ require_relative "odrl/version"
 
 module ODRL
     class Rule < Base
-        attr_accessor :uid, :constraints, :assets, :predicate, :type, :actions
+        attr_accessor :uid, :constraints, :assets, :predicate, :type, :actions, :assigner, :assignee
         def initialize(args)
             @uid = args[:uid]
 
@@ -33,7 +33,7 @@ module ODRL
         end
 
 
-        def addAsset(asset: args)
+        def addAsset(asset:)
             unless asset.is_a?(Asset)
                 raise "Asset is not an ODRL Asset" 
             else
@@ -42,7 +42,7 @@ module ODRL
             end
         end
 
-        def addConstraint(constraint: args)
+        def addConstraint(constraint:)
             unless constraint.is_a?(Constraint)
                 raise "Constraint is not an ODRL Constraint" 
             else
@@ -50,7 +50,7 @@ module ODRL
             end
         end
 
-        def addAction(action: args)
+        def addAction(action:)
             unless action.is_a?(Action)
                 raise "Action is not an ODRL Action" 
             else
@@ -58,9 +58,25 @@ module ODRL
             end
         end
 
+        def addAssigner(party:)
+            unless party.is_a?(Party)
+                raise "Assigner is not an ODRL Party" 
+            else
+                self.assigner[party.uid] = [PASSIGNER, party] 
+            end
+        end
+
+        def addAssignee(party:)
+            unless party.is_a?(Party)
+                raise "Asigner is not an ODRL Party" 
+            else
+                self.assignee[party.uid] = [PASSIGNEE, party] 
+            end
+        end
+
         def load_graph
             super
-            [:constraints, :assets, :actions].each do |connected_object_type|
+            [:constraints, :assets, :actions, :assigner, :assignee].each do |connected_object_type|
                 next unless self.send(connected_object_type)
                 self.send(connected_object_type).each do |uid, typedconnection|
                     predicate, odrlobject = typedconnection  # e.g. "action", ActionObject

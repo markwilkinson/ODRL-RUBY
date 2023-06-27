@@ -3,7 +3,7 @@
 module ODRL
 
     class Action < Base
-        attr_accessor :uid, :refinements, :predicate, :type
+        attr_accessor :uid, :refinements, :predicate, :type, :value
         def initialize(args)
             @uid = args[:uid]
             unless @uid
@@ -12,6 +12,10 @@ module ODRL
             super(args.merge({uid: @uid}))
 
             self.type="http://www.w3.org/ns/odrl/2/Action"
+
+            @value = args[:value]
+            raise "Actions must haves a value such as 'use' - I'm dead!" unless @value
+            @value = "http://www.w3.org/ns/odrl/2/#{@value}" unless @value =~ /http:\/\//  # if it is already a URI, then let it go
 
             @refinements = Hash.new
 

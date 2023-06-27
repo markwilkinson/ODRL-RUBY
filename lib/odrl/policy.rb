@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 require_relative "odrl/version"
-require_relative "./base"
-#require "ODRL::Asset"
-# require "ODRL::Rule"
-# require "ODRL::Constraint"
 
 module ODRL
     class Error < StandardError; end

@@ -13,7 +13,7 @@ SKOS =  RDF::Vocabulary.new("http://www.w3.org/2004/02/skos/core#")
 ODRLV =  RDF::Vocabulary.new("http://www.w3.org/ns/odrl/2/")
 OBO = RDF::Vocabulary.new("http://purl.obolibrary.org/obo/")
 XSD = RDF::Vocabulary.new("http://www.w3.org/2001/XMLSchema#")
-
+http://purl.org/dc/elements/subject
 CPOLICY= "http://www.w3.org/ns/odrl/2/Policy"
 
 CSET= "http://www.w3.org/ns/odrl/2/Set"
@@ -58,9 +58,12 @@ PPARTOF = "http://www.w3.org/ns/odrl/2/partOf"
 
 PROPERTIES = {
         title: DCT.title,
-        author: DCT.author,
+        author: DCT.creator,
+        description: DCT.description,
         uid: DCT.identifier,
-        type: RDF.type
+        type: RDF.type,
+        subject: DCT.subject
+
 }
 
 module ODRL
@@ -68,7 +71,7 @@ module ODRL
 
         @@repository = RDF::Repository.new()
                 
-        attr_accessor :title, :author, :baseURI, :uid, :type
+        attr_accessor :title, :creator, :description, :subject :baseURI, :uid, :type
 
         def self.baseURI
                 return ENV['ODRL_BASEURI'] || "http://example.org/"
@@ -88,8 +91,11 @@ module ODRL
 
         def initialize(args)
                 #args = defaults.merge(args)
+
                 @title = args[:title]
-                @author = args[:author]
+                @creator = args[:creator]
+                @description = args[:description]
+                @subject = args[:subject]
                 @baseURI = args[:baseURI] || self.baseURI
                 @uid = args[:uid]
                 @type = args[:type]
@@ -177,7 +183,7 @@ module ODRL
         end
 
         def load_graph
-                [:title, :author, :uid, :type].each do |method|
+                [:title, :creator, :description, :subject, :uid, :type].each do |method|
                         next unless self.send(method)
                         next if self.send(method).empty?
                         subject = self.uid
