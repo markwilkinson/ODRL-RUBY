@@ -14,7 +14,7 @@ describe ODRL::Action do
          $baseURI = "http://example.org" unless $baseURI
          p = ODRL::Action.new({})
          expect(p.class).to be (ODRL::Action)
-         expect(p.uid).to match (/\#action\_/)
+         expect(p.uid).to match (/\#action\_\d+/)
 
       end
 
@@ -49,6 +49,18 @@ describe ODRL::Action do
          d = ODRL::Use.new({})
          d.addRefinement(refinement: c1)
          expect(d.refinements.keys.length).to eq 1
+      end
+
+      it "should allow serialize" do 
+         ODRL::Base.clear_repository
+         p = ODRL::Constraint.new({rightOperand: "https://example.org/business", 
+                                 leftOperand: "https://example.org/thing", 
+                                 operator: "eq"})
+         d = ODRL::Action.new({})
+         d.addRefinement(refinement: p)
+         d.load_graph
+         result = d.serialize
+         expect(result.length).to eq 958
       end
 
 

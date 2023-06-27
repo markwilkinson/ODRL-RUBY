@@ -17,14 +17,12 @@ describe ODRL::Rule do
 
 
       it "should init the right class" do 
-         $baseURI = "http://example.org" unless $baseURI
          p = ODRL::Prohibition.new({})
-         expect(p.uid).to match (/\#rule\_/)
+         expect(p.uid).to match (/\#rule\_\d+/)
       end
 
 
       it "should allow adding assets" do 
-         $baseURI = "http://example.org" unless $baseURI
          r = ODRL::Prohibition.new({})
          a = ODRL::Asset.new({})
          r.addAsset(asset: a)
@@ -33,7 +31,6 @@ describe ODRL::Rule do
       end
 
       it "should allow adding constraints, either as a single, or as an array" do 
-         $baseURI = "http://example.org" unless $baseURI
          c1 = ODRL::Constraint.new({})
          c2 = ODRL::Constraint.new({})
          d = ODRL::Duty.new({constraints: c1})
@@ -44,18 +41,26 @@ describe ODRL::Rule do
          expect(d.constraints.keys.length).to eq 2
       end
       it "should allow adding constraints by method call" do 
-         $baseURI = "http://example.org" unless $baseURI
          c1 = ODRL::Constraint.new({})
          d = ODRL::Duty.new({})
          d.addConstraint(constraint: c1)
          expect(d.constraints.keys.length).to eq 1
       end
       it "should allow adding assets by method call" do 
-         $baseURI = "http://example.org" unless $baseURI
          c1 = ODRL::Asset.new({})
          d = ODRL::Duty.new({})
          d.addAsset(asset: c1)
          expect(d.assets.keys.length).to eq 1
+      end
+
+      it "should allow serialize" do
+         ODRL::Base.clear_repository
+         c1 = ODRL::Asset.new({})
+         d = ODRL::Duty.new({})
+         d.addAsset(asset: c1)
+         d.load_graph
+         result = d.serialize
+         expect(result.length).to eq 630
       end
 
    end

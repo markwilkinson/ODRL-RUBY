@@ -5,13 +5,16 @@ require_relative "odrl/version"
 # require "ODRL::Constraint"
 
 module ODRL
-    class Rule
-        attr_accessor :uid, :constraints, :assets, :predicate, :type
+    class Rule < Base
+        attr_accessor :uid, :constraints, :assets, :predicate, :type, :actions
         def initialize(args)
             @uid = args[:uid]
+
             unless @uid
-                @uid = $baseURI + "#rule_" + Base.getuuid
+                @uid = Base.baseURI + "#rule_" + Base.getuuid
             end
+            super(args.merge({uid: @uid}))
+            
             @constraints = Hash.new
             @assets = Hash.new
 
@@ -45,6 +48,34 @@ module ODRL
             else
                 self.constraints[constraint.uid] = [PCONSTRAINT, constraint] 
             end
+        end
+
+        def addAction(action: args)
+            unless action.is_a?(Action)
+                raise "Action is not an ODRL Action" 
+            else
+                self.actions[action.uid] = [PACTION, action] 
+            end
+        end
+
+        def load_graph
+            super
+            [:constraints, :assets, :actions].each do |connected_object_type|
+                next unless self.send(connected_object_type)
+                self.send(connected_object_type).each do |uid, typedconnection|
+                    predicate, odrlobject = typedconnection  # e.g. "action", ActionObject
+                    object = odrlobject.uid
+                    subject = self.uid
+                    repo = self.repository
+                    triplify(subject, predicate, object, repo)
+                    odrlobject.load_graph  # start the cascade
+                end
+            end
+        end
+
+        def serialize
+            # :title, :author, :baseURI, :uid, :type from parent
+            super()
         end
     end
 

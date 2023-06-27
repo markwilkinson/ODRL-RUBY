@@ -14,11 +14,11 @@ describe ODRL::Party do
          $baseURI = "http://example.org" unless $baseURI
          p = ODRL::Party.new({predicate: PASSIGNER})
          expect(p.class).to be (ODRL::Party)
-         expect(p.uid).to match (/\#party\_/)
+         expect(p.uid).to match (/\#party\_\d+/)
          expect(p.type).to eq ("http://www.w3.org/ns/odrl/2/Party")
          p = ODRL::PartyCollection.new({predicate: PASSIGNER})
          expect(p.class).to be (ODRL::PartyCollection)
-         expect(p.uid).to match (/\#party\_/)
+         expect(p.uid).to match (/\#party\_\d+/)
          expect(p.type).to eq ("http://www.w3.org/ns/odrl/2/PartyCollection")
 
       end
@@ -73,6 +73,18 @@ describe ODRL::Party do
          p = ODRL::PartyCollection.new({predicate: PASSIGNEE})
          expect(p.predicate).to eq PASSIGNEE
          expect{ODRL::PartyCollection.new({predicate: "somethignelse"})}.to raise_error(Exception)
+      end
+
+      it "should allow serialize" do
+         ODRL::Base.clear_repository
+         p = ODRL::Constraint.new({rightOperand: "https://example.org/business", 
+                                 leftOperand: "https://example.org/thing", 
+                                 operator: "eq"})
+         d = ODRL::Party.new({predicate: PASSIGNEE})
+         d.addRefinement(refinement: p)
+         d.load_graph
+         result = d.serialize
+         expect(result.length).to eq 955
       end
 
    end

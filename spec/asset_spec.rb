@@ -12,15 +12,13 @@ describe ODRL::Asset do
    context "When testing the Asset class" do 
       
       it "should init the right class" do 
-         $baseURI = "http://example.org" unless $baseURI
          p = ODRL::Asset.new({})
          expect(p.class).to be (ODRL::Asset)
-         expect(p.uid).to match (/\#asset\_/)
+         expect(p.uid).to match (/\#asset\_\d+/)
 
       end
 
       it "an AssetCollection should init the right class and be an Asset also" do 
-         $baseURI = "http://example.org" unless $baseURI
          p = ODRL::AssetCollection.new({})
          expect(p.class).to be (ODRL::AssetCollection)
          expect(p.uid).to match (/\#asset\_/)
@@ -29,34 +27,29 @@ describe ODRL::Asset do
       end
 
       it "an asset should allow to be part of an AssetCollection" do 
-         $baseURI = "http://example.org" unless $baseURI
          ac = ODRL::AssetCollection.new({})
          a = ODRL::Asset.new({partOf: ac})
          expect(a.partOf.class).to be (ODRL::AssetCollection)
       end
 
       it "an asset should refuse to be part of a non AssetCollection" do 
-         $baseURI = "http://example.org" unless $baseURI
          r = ODRL::Rule.new({})
          expect{ODRL::Asset.new({partOf: r})}.to raise_error(Exception)
       end
 
       it "an asset should allow to be governed by a policy" do 
-         $baseURI = "http://example.org" unless $baseURI
          p = ODRL::Policy.new({})
          a = ODRL::Asset.new({hasPolicy: p})
          expect(a.hasPolicy.is_a? ODRL::Policy).to be (true)
       end
 
       it "an asset should refuse to be part of a non AssetCollection" do 
-         $baseURI = "http://example.org" unless $baseURI
          r = ODRL::Rule.new({})
          expect{ODRL::Asset.new({hasPolicy: r})}.to raise_error(Exception)
       end
 
 
       it "should allow adding refinements, either as a single, or as an array" do 
-         $baseURI = "http://example.org" unless $baseURI
          c1 = ODRL::Constraint.new({})
          c2 = ODRL::Constraint.new({})
          d = ODRL::Asset.new({refinements: c1})
@@ -69,12 +62,24 @@ describe ODRL::Asset do
 
 
       it "should allow adding constraints by method call" do 
-         $baseURI = "http://example.org" unless $baseURI
          c1 = ODRL::Constraint.new({})
          d = ODRL::Asset.new({})
          d.addRefinement(refinement: c1)
          expect(d.refinements.keys.length).to eq 1
       end
+
+      it "should allow serialize" do
+         ODRL::Base.clear_repository
+         p = ODRL::Constraint.new({rightOperand: "https://example.org/business", 
+                                 leftOperand: "https://example.org/thing", 
+                                 operator: "eq"})
+         d = ODRL::Asset.new({})
+         d.addRefinement(refinement: p)
+         d.load_graph
+         result = d.serialize
+         expect(result.length).to eq 955
+      end
+
 
    end
 
