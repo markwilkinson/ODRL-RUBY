@@ -6,7 +6,7 @@ require_relative "odrl/version"
 
 module ODRL
     class Rule < Base
-        attr_accessor :uid, :constraints, :assets, :predicate, :type, :actions, :assigner, :assignee
+        attr_accessor :uid, :constraints, :assets, :predicate, :type, :action, :assigner, :assignee
         def initialize(args)
             @uid = args[:uid]
 
@@ -17,6 +17,9 @@ module ODRL
             
             @constraints = Hash.new
             @assets = Hash.new
+            @assigner = Hash.new
+            @assignee = Hash.new
+            @action = Hash.new
 
             args[:assets] = [args[:assets]] unless args[:assets].is_a? Array
             if !(args[:assets].first.nil?)
@@ -54,7 +57,7 @@ module ODRL
             unless action.is_a?(Action)
                 raise "Action is not an ODRL Action" 
             else
-                self.actions[action.uid] = [PACTION, action] 
+                self.action[action.uid] = [PACTION, action] 
             end
         end
 
@@ -76,7 +79,7 @@ module ODRL
 
         def load_graph
             super
-            [:constraints, :assets, :actions, :assigner, :assignee].each do |connected_object_type|
+            [:constraints, :assets, :action, :assigner, :assignee].each do |connected_object_type|
                 next unless self.send(connected_object_type)
                 self.send(connected_object_type).each do |uid, typedconnection|
                     predicate, odrlobject = typedconnection  # e.g. "action", ActionObject
@@ -89,9 +92,8 @@ module ODRL
             end
         end
 
-        def serialize
-            # :title, :author, :baseURI, :uid, :type from parent
-            super()
+        def serialize(format:)
+            super
         end
     end
 

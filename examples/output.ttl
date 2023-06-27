@@ -1,0 +1,47 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+<http://example.org#action_68785487525736>
+    <http://purl.org/dc/terms/identifier> <http://example.org#action_68785487525736> ;
+    a <http://www.w3.org/ns/odrl/2/Action> .
+
+<http://example.org#constraint_68785487525880>
+    <http://purl.org/dc/terms/identifier> <http://example.org#constraint_68785487525880> ;
+    <http://purl.org/dc/terms/title> "Only during the hackathon"@en ;
+    a <http://www.w3.org/ns/odrl/2/Constraint> ;
+    <http://www.w3.org/ns/odrl/2/leftOperand> <http://www.w3.org/ns/odrl/2/event> ;
+    <http://www.w3.org/ns/odrl/2/operator> <http://www.w3.org/ns/odrl/2/eq> ;
+    <http://www.w3.org/ns/odrl/2/rightOperand> <https://2023.biohackathon.org> .
+
+<http://example.org#policy_68785487446247>
+    <http://purl.org/dc/terms/creator> <https://orcid.org/0000-0001-6960-357X> ;
+    <http://purl.org/dc/terms/description> "An offer for Toshiaki-san to use the polyA data during the hackathon"@en ;
+    <http://purl.org/dc/terms/identifier> <http://example.org#policy_68785487446247> ;
+    <http://purl.org/dc/terms/subject> "collaboration"@en ;
+    <http://purl.org/dc/terms/title> "Offer to Toshiaki-san"@en ;
+    a <http://www.w3.org/ns/odrl/2/Offer> ;
+    <http://www.w3.org/ns/odrl/2/permission> <http://example.org#rule_68785487525598> .
+
+<http://example.org#rule_68785487525598>
+    <http://purl.org/dc/terms/identifier> <http://example.org#rule_68785487525598> ;
+    <http://purl.org/dc/terms/title> "Permission to use"@en ;
+    a <http://www.w3.org/ns/odrl/2/Permission> ;
+    <http://www.w3.org/ns/odrl/2/action> <http://example.org#action_68785487525736> ;
+    <http://www.w3.org/ns/odrl/2/assignee> <https://orcid.org/0000-0001-6960-357X> ;
+    <http://www.w3.org/ns/odrl/2/assigner> <https://orcid.org/0000-0003-2391-0384> ;
+    <http://www.w3.org/ns/odrl/2/constraint> <http://example.org#constraint_68785487525880> ;
+    <http://www.w3.org/ns/odrl/2/target> <http://mark.wilkinson.org/data/polyA> .
+
+<http://mark.wilkinson.org/data/polyA>
+    <http://purl.org/dc/terms/identifier> <http://mark.wilkinson.org/data/polyA> ;
+    <http://purl.org/dc/terms/title> "Mark's PolyA Database"@en ;
+    a <http://www.w3.org/ns/odrl/2/Asset> .
+
+<https://orcid.org/0000-0001-6960-357X>
+    <http://purl.org/dc/terms/identifier> <https://orcid.org/0000-0001-6960-357X> ;
+    <http://purl.org/dc/terms/title> "Mark D Wilkinson"@en ;
+    a <http://www.w3.org/ns/odrl/2/Party> .
+
+<https://orcid.org/0000-0003-2391-0384>
+    <http://purl.org/dc/terms/identifier> <https://orcid.org/0000-0003-2391-0384> ;
+    <http://purl.org/dc/terms/title> "Toshiaki Katayama"@en ;
+    a <http://www.w3.org/ns/odrl/2/Party> .

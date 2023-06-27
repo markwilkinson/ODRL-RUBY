@@ -78,9 +78,8 @@ module ODRL
             end
         end
 
-        def serialize
-            # :title, :author, :baseURI, :uid, :type from parent
-            super()
+        def serialize(format:)
+            super
         end
 
     end

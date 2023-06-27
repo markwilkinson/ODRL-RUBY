@@ -3,19 +3,20 @@
 module ODRL
 
     class Action < Base
-        attr_accessor :uid, :refinements, :predicate, :type, :value
+        attr_accessor :uid, :refinements, :predicate, :type, :value, :vallabel
         def initialize(args)
-            @uid = args[:uid]
-            unless @uid
-                self.uid = Base.baseURI + "#action_" + Base.getuuid
-            end
+            @value = args[:value]
+            @vallabel = args[:value]
+            raise "Actions must haves a value such as 'use' - I'm dead!" unless @value
+            @value = "http://www.w3.org/ns/odrl/2/#{@value}" unless @value =~ /http:\/\//  # if it is already a URI, then let it go
+
+            @uid = @value
+            # unless @uid
+            #     self.uid = Base.baseURI + "#action_" + Base.getuuid
+            # end
             super(args.merge({uid: @uid}))
 
             self.type="http://www.w3.org/ns/odrl/2/Action"
-
-            @value = args[:value]
-            raise "Actions must haves a value such as 'use' - I'm dead!" unless @value
-            @value = "http://www.w3.org/ns/odrl/2/#{@value}" unless @value =~ /http:\/\//  # if it is already a URI, then let it go
 
             @refinements = Hash.new
 
@@ -53,11 +54,19 @@ module ODRL
                     odrlobject.load_graph  # start the cascade
                 end
             end
+            subject = self.uid
+            object = self.vallabel
+            predicate = SCHEMA.name
+            repo = self.repository
+            triplify(subject, predicate, object, repo)
+            object = self.vallabel
+            predicate = RDFS.label
+            repo = self.repository
+            triplify(subject, predicate, object, repo)
         end
 
         def serialize
-            # :title, :author, :baseURI, :uid, :type from parent
-            super()
+            super
         end
 
     end
@@ -67,13 +76,13 @@ module ODRL
     class Use < Action 
         def initialize(args)
             super(args)
-            self.type = "http://www.w3.org/ns/odrl/2/action/use" unless self.type
+            self.type = "http://www.w3.org/ns/odrl/2/Action" unless self.type
         end
     end
     class Transfer < Action
         def initialize(args)
             super(args)
-            self.type = "http://www.w3.org/ns/odrl/2/action/transfer" unless self.type
+            self.type = "http://www.w3.org/ns/odrl/2/Action" unless self.type
         end
     end
 

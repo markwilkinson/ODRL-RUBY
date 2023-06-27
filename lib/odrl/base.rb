@@ -1,19 +1,8 @@
 # frozen_string_literal: true
 
-require 'linkeddata'
 require_relative "odrl/version"
 
-RDFV =  RDF::Vocabulary.new("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
-RDFS = RDF::Vocabulary.new("http://www.w3.org/2000/01/rdf-schema#")
-DCAT = RDF::Vocabulary.new("http://www.w3.org/ns/dcat#")
-DC = RDF::Vocabulary.new("http://purl.org/dc/elements/1.1/")
-DCT = RDF::Vocabulary.new("http://purl.org/dc/terms/")
-FUND = RDF::Vocabulary.new("http://vocab.ox.ac.uk/projectfunding#")
-SKOS =  RDF::Vocabulary.new("http://www.w3.org/2004/02/skos/core#")
-ODRLV =  RDF::Vocabulary.new("http://www.w3.org/ns/odrl/2/")
-OBO = RDF::Vocabulary.new("http://purl.obolibrary.org/obo/")
-XSD = RDF::Vocabulary.new("http://www.w3.org/2001/XMLSchema#")
-http://purl.org/dc/elements/subject
+# one day move these all to ODRLV.xxxx
 CPOLICY= "http://www.w3.org/ns/odrl/2/Policy"
 
 CSET= "http://www.w3.org/ns/odrl/2/Set"
@@ -24,10 +13,10 @@ CAGREEMENT= "http://www.w3.org/ns/odrl/2/Agreement"
 PASSET = "http://www.w3.org/ns/odrl/2/target"
 CASSET= "http://www.w3.org/ns/odrl/2/Asset"
 
-CPERMISSION= "http://www.w3.org/ns/odrl/2/permission"
-PPERMISSION = "http://www.w3.org/ns/odrl/2/Permission"
-CPROHIBITION= "http://www.w3.org/ns/odrl/2/prohibition"
-PPROHIBITION = "http://www.w3.org/ns/odrl/2/Prohibition"
+CPERMISSION= "http://www.w3.org/ns/odrl/2/Permission"
+PPERMISSION = "http://www.w3.org/ns/odrl/2/permission"
+CPROHIBITION= "http://www.w3.org/ns/odrl/2/Prohibition"
+PPROHIBITION = "http://www.w3.org/ns/odrl/2/prohibition"
 PDUTY= "http://www.w3.org/ns/odrl/2/obligation"
 CDUTY = "http://www.w3.org/ns/odrl/2/Duty"
 
@@ -58,7 +47,7 @@ PPARTOF = "http://www.w3.org/ns/odrl/2/partOf"
 
 PROPERTIES = {
         title: DCT.title,
-        author: DCT.creator,
+        creator: DCT.creator,
         description: DCT.description,
         uid: DCT.identifier,
         type: RDF.type,
@@ -71,10 +60,10 @@ module ODRL
 
         @@repository = RDF::Repository.new()
                 
-        attr_accessor :title, :creator, :description, :subject :baseURI, :uid, :type
+        attr_accessor :title, :creator, :description, :subject, :baseURI, :uid, :type
 
         def self.baseURI
-                return ENV['ODRL_BASEURI'] || "http://example.org/"
+                return ENV['ODRL_BASEURI'] || "http://example.org"
         end
 
         def self.repository
@@ -142,22 +131,21 @@ module ODRL
                 
                 unless s.respond_to?('uri')
                 
-                if s.to_s =~ /^\w+:\/?\/?[^\s]+/
-                        s = RDF::URI.new(s.to_s)
-                else
-                abort "Subject #{s.to_s} must be a URI-compatible thingy"
-                end
+                        if s.to_s =~ /^\w+:\/?\/?[^\s]+/
+                                s = RDF::URI.new(s.to_s)
+                        else
+                                raise "Subject #{s.to_s} must be a URI-compatible thingy #{s}, #{p}, #{o}"
+                        end
                 end
                 
                 unless p.respond_to?('uri')
         
-                if p.to_s =~ /^\w+:\/?\/?[^\s]+/
-                        p = RDF::URI.new(p.to_s)
-                else
-                abort "Predicate #{p.to_s} must be a URI-compatible thingy"
-                end
-                end
-        
+                        if p.to_s =~ /^\w+:\/?\/?[^\s]+/
+                                p = RDF::URI.new(p.to_s)
+                        else
+                                raise "Predicate #{p.to_s} must be a URI-compatible thingy #{s}, #{p}, #{o}"
+                        end
+                end        
                 unless o.respond_to?('uri')
                 if o.to_s =~ /^\w+:\/?\/?[^\s]+/
                         o = RDF::URI.new(o.to_s)
@@ -188,14 +176,16 @@ module ODRL
                         next if self.send(method).empty?
                         subject = self.uid
                         predicate = PROPERTIES[method]
+                        #warn "prediate #{predicate} for method #{method}"
                         object = self.send(method)
                         repo = self.repository
                         triplify(subject, predicate, object, repo)
                 end
         end
 
-        def serialize
-                return self.repository.dump($format)
+        def serialize(format: $format)
+                format = format.to_sym
+                return self.repository.dump(format)
         end
         
         private  
