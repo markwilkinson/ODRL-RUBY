@@ -51,8 +51,8 @@ PROPERTIES = {
         description: DCT.description,
         uid: DCT.identifier,
         type: RDF.type,
-        subject: DCT.subject
-
+        subject: DCT.subject,
+        uid: ODRLV.uid
 }
 
 module ODRL
@@ -60,7 +60,7 @@ module ODRL
 
         @@repository = RDF::Repository.new()
                 
-        attr_accessor :title, :creator, :description, :subject, :baseURI, :uid, :type
+        attr_accessor :title, :creator, :description, :subject, :baseURI, :uid, :type, :label
 
         def self.baseURI
                 return ENV['ODRL_BASEURI'] || "http://example.org"
@@ -88,6 +88,7 @@ module ODRL
                 @baseURI = args[:baseURI] || self.baseURI
                 @uid = args[:uid]
                 @type = args[:type]
+                @label = args[:label] || @title 
                 #@repository = RDF::Repository.new() unless self.repository
 
                 raise "Every object must have a uid - attempt to create #{@type}" unless @uid
@@ -171,7 +172,7 @@ module ODRL
         end
 
         def load_graph
-                [:title, :creator, :description, :subject, :uid, :type].each do |method|
+                [:title, :label, :creator, :description, :subject, :uid, :type].each do |method|
                         next unless self.send(method)
                         next if self.send(method).empty?
                         subject = self.uid

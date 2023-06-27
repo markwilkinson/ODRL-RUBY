@@ -2,6 +2,11 @@
 
 module ODRL
 
+
+    # ODRL::Action
+    # Describes an action like "use"
+    # 
+    # @author Mark D Wilkinson
     class Asset < Base
         attr_accessor :uid, :hasPolicy, :refinements, :partOf
 

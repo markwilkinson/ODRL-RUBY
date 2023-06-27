@@ -3,7 +3,24 @@
 module ODRL
 
     class Action < Base
+# ODRL::Action
+# Describes an action like "use"
+# 
+# @author Mark D Wilkinson
+# @attr [URI] (optional) uid the URI of the Action node
+# @attr [[ODRL::Refinement]] (optional) ODRL Refinement objects
+# @attr [URI] predicate (optional) the predicate you wish to use with this action
+# @attr [string] value (required) a string like "use"
+# @attr [string] vallabel (optional) a string like "use"
+
         attr_accessor :uid, :refinements, :predicate, :type, :value, :vallabel
+
+
+        # constructor
+        # @param  [Hash] opts  the options to create a message with.
+        # @option :value   the string value of rthe action, like "use"
+        # @option :vallabel    the string for the label, like "use"
+        #
         def initialize(args)
             @value = args[:value]
             @vallabel = args[:value]
@@ -31,6 +48,10 @@ module ODRL
 
         end
 
+        # Adds an ODRL Refinement
+        #
+        # @param refinement [ODRL::Refinement]  the refinement to the action
+        #
         def addRefinement(refinement: args)
             unless refinement.is_a?(Constraint)
                 raise "Refinement is not an ODRL Constraint" 
@@ -40,6 +61,9 @@ module ODRL
         end
 
 
+        # Causes the triples of this object to be formed in the in-memory store
+        # This includes any "cascading" objects for which this is the subject of the triple
+        #
         def load_graph
             super
             # TODO  This is bad DRY!!  Put the bulk of this method into the base object
@@ -65,6 +89,10 @@ module ODRL
             triplify(subject, predicate, object, repo)
         end
 
+        # Returns the serialized RDF for this object and cascading related objects
+        #
+        # @param format [Symbol] a valid RDF::Writer format (e.g. :turtle)
+        #
         def serialize(format:)
             super
         end
