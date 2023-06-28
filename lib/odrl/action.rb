@@ -2,28 +2,28 @@
 
 module ODRL
 
-    class Action < Base
-# ODRL::Action
-# Describes an action like "use"
-# 
-# @author Mark D Wilkinson
-# @attr [URI] (optional) uid the URI of the Action node
-# @attr [[ODRL::Refinement]] (optional) ODRL Refinement objects
-# @attr [URI] predicate (optional) the predicate you wish to use with this action
-# @attr [string] value (required) a string like "use"
-# @attr [string] vallabel (optional) a string like "use"
+        # ODRL::Action
+        # Describes an action like "use"
+        # 
+        # @author Mark D Wilkinson
+        # @attr [URI] (optional) uid the URI of the Action node
+        # @attr [[ODRL::Refinement]] (optional) ODRL Refinement objects
+        # @attr [URI] predicate (optional) the predicate you wish to use with this action
+        # @attr [string] value (required) a string like "use"
+        # @attr [string] vallabel (optional) a string like "use"
+        class Action < Base
 
         attr_accessor :uid, :refinements, :predicate, :type, :value, :vallabel
 
 
         # constructor
         # @param  [Hash] opts  the options to create a message with.
-        # @option :value   the string value of rthe action, like "use"
-        # @option :vallabel    the string for the label, like "use"
+        # @option opts [String] :value   the string value of rthe action, like "use"
+        # @option opts [String] :vallabel    the string for the label, like "use"
         #
-        def initialize(args)
-            @value = args[:value]
-            @vallabel = args[:value]
+        def initialize(value:, vallabel: "", type: CACTION, **args)
+            @value = value
+            @vallabel = vallabel || @value
             raise "Actions must haves a value such as 'use' - I'm dead!" unless @value
             @value = "http://www.w3.org/ns/odrl/2/#{@value}" unless @value =~ /http:\/\//  # if it is already a URI, then let it go
 
@@ -31,9 +31,8 @@ module ODRL
             # unless @uid
             #     self.uid = Base.baseURI + "#action_" + Base.getuuid
             # end
-            super(args.merge({uid: @uid}))
+            super(uid: @uid, type: type, **args)
 
-            self.type="http://www.w3.org/ns/odrl/2/Action"
 
             @refinements = Hash.new
 
@@ -102,15 +101,13 @@ module ODRL
 
 
     class Use < Action 
-        def initialize(args)
-            super(args)
-            self.type = "http://www.w3.org/ns/odrl/2/Action" unless self.type
+        def initialize(type: CACTION, **args)
+            super(type: :type, **args)
         end
     end
     class Transfer < Action
-        def initialize(args)
-            super(args)
-            self.type = "http://www.w3.org/ns/odrl/2/Action" unless self.type
+        def initialize(type: CACTION, **args)
+            super(type: :type, **args)
         end
     end
 

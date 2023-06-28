@@ -12,7 +12,9 @@ CAGREEMENT= ODRLV.Agreement.to_s
 CPRIVACY= ODRLV.Privacy.to_s
 PASSET = ODRLV.target.to_s
 CASSET= ODRLV.Asset.to_s
+CASSETCOLLECTION= ODRLV.Asset.to_s
 
+CRULE= ODRLV.Rule.to_s
 CPERMISSION= ODRLV.Permission.to_s
 PPERMISSION = ODRLV.permission.to_s
 CPROHIBITION= ODRLV.Prohibition.to_s
@@ -24,6 +26,8 @@ PRULE = ODRLV.Rule.to_s
 
 
 PACTION = ODRLV.action.to_s
+VUSE = ODRLV.use.to_s  # this is goofy ODRL stuff... 
+VTRANSFER = ODRLV.transfer.to_s # this is goofy ODRL stuff... 
 CACTION= ODRLV.Action.to_s
 
 PREFINEMENT = ODRLV.refinement.to_s
@@ -31,6 +35,7 @@ PREFINEMENT = ODRLV.refinement.to_s
 PASSIGNER = ODRLV.assigner.to_s
 PASSIGNEE =  ODRLV.assignee.to_s
 CPARTY= ODRLV.Party.to_s
+CPARTYCOLLECTION= ODRLV.Party.to_s
 
 PCONSTRAINT = ODRLV.constraint.to_s
 CCONSTRAINT = ODRLV.Constraint.to_s
@@ -79,21 +84,31 @@ module ODRL
                 return true
         end
 
-        def initialize(args)
-                #args = defaults.merge(args)
+        def initialize(
+                title: nil, 
+                creator: nil, 
+                description: nil, 
+                subject: nil, 
+                baseURI: "http://example.org", 
+                uid:, 
+                id: nil, 
+                type:, 
+                label: nil,
+                 **_)
 
-                @title = args[:title]
-                @creator = args[:creator]
-                @description = args[:description]
-                @subject = args[:subject]
-                @baseURI = args[:baseURI] || self.baseURI
-                @uid = args[:uid]
-                @type = args[:type]
-                @label = args[:label] || @title 
-                @id = args[:uid] || nil
-                #@repository = RDF::Repository.new() unless self.repository
+                @title = title
+                @creator = creator
+                @description = description
+                @subject = subject
+                @baseURI = baseURI || ODRL::Base.baseURI
+                @uid = uid
+                @type = type
+                @label = label || @title 
+                @id = @uid
 
                 raise "Every object must have a uid - attempt to create #{@type}" unless @uid
+                raise "Every object must have a type - " unless @type
+                
 
                 $g = RDF::Graph.new()
                 if ENV["TRIPLES_FORMAT"]
@@ -101,23 +116,25 @@ module ODRL
                 else
                         $format = :jsonld
                 end
-                $writer = get_writer(type: $format)  # set it by default
 
         end
 
         def get_writer(type:)
-                $writer = RDF::Writer.for(type).buffer do |w|
-                w.prefix(:foaf, RDF::URI.new("http://xmlns.com/foaf/0.1/"))
-                w.prefix(:dc, RDF::URI.new("http://purl.org/dc/terms/"))
-                w.prefix(:rdf, RDF::URI.new("http://www.w3.org/1999/02/22-rdf-syntax-ns#"))
-                w.prefix(:rdfs, RDF::URI.new("http://www.w3.org/2000/01/rdf-schema#"))
-                w.prefix(:vcard, RDF::URI.new("http://www.w3.org/2006/vcard/ns#"))
-                w.prefix(:odrl, RDF::URI.new("http://www.w3.org/ns/odrl/2/"))
-                w.prefix(:this, RDF::URI.new("http://w3id.org/FAIR_Training_LDP/DAV/home/LDP/DUC-CCE/IPGB#"))
-                w.prefix(:obo, RDF::URI.new("http://purl.obolibrary.org/obo/"))
-                w.prefix(:xsd, RDF::URI.new("http://www.w3.org/2001/XMLSchema#"))
-                end
-                return $writer
+                w = RDF::Writer.for(type)
+                # w.prefix(:foaf, RDF::URI.new("http://xmlns.com/foaf/0.1/"))
+                # w.prefix(:dc, RDF::URI.new("http://purl.org/dc/terms/"))
+                # w.prefix(:rdf, RDF::URI.new("http://www.w3.org/1999/02/22-rdf-syntax-ns#"))
+                # w.prefix(:rdfs, RDF::URI.new("http://www.w3.org/2000/01/rdf-schema#"))
+                # w.prefix(:vcard, RDF::URI.new("http://www.w3.org/2006/vcard/ns#"))
+                # w.prefix(:odrl, RDF::URI.new("http://www.w3.org/ns/odrl/2/"))
+                # w.prefix(:this, RDF::URI.new("http://w3id.org/FAIR_Training_LDP/DAV/home/LDP/DUC-CCE/IPGB#"))
+                # w.prefix(:obo, RDF::URI.new("http://purl.obolibrary.org/obo/"))
+                # w.prefix(:xsd, RDF::URI.new("http://www.w3.org/2001/XMLSchema#"))
+                # w.prefix(:orcid, RDF::URI.new("https://orcid.org/"))
+                # warn "W" 
+                # warn w.prefixes.inspect
+                
+                return w
         end
 
         def triplify(s, p, o, repo)
@@ -174,7 +191,7 @@ module ODRL
         end
 
         def load_graph
-                [:title, :label, :creator, :description, :subject, :uid, :type].each do |method|
+                [:title, :label, :creator, :description, :subject, :uid, :id, :type].each do |method|
                         next unless self.send(method)
                         next if self.send(method).empty?
                         subject = self.uid
@@ -188,7 +205,8 @@ module ODRL
 
         def serialize(format: $format)
                 format = format.to_sym
-                return self.repository.dump(format)
+                w = get_writer(type: format)
+                return w.dump(self.repository)
         end
         
         private  

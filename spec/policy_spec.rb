@@ -44,7 +44,7 @@ describe ODRL::Policy do
       
       it "should add a prohibition to list of rules" do 
          p = ODRL::Agreement.new(title: "test1", author: "test2") 
-         pro = ODRL::Prohibition.new({})
+         pro = ODRL::Prohibition.new()
          p.addProhibition(rule: pro)
          expect(p.rules.length).to eq (1)
          expect(p.rules[p.rules.keys.first][1].class.to_s).to eq "ODRL::Prohibition"
@@ -54,11 +54,11 @@ describe ODRL::Policy do
       it "should allow serialize" do 
          ODRL::Base.clear_repository
          p = ODRL::Offer.new(title: "test1", author: "test2") 
-         pro = ODRL::Prohibition.new({})
+         pro = ODRL::Prohibition.new()
          p.addProhibition(rule: pro)
          p.load_graph
          result = p.serialize(format: :turtle)
-         expect(result.length).to eq 607
+         expect(result.length).to eq 779
       end
 
 

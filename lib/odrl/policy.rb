@@ -9,12 +9,12 @@ module ODRL
     class Policy  < Base
         attr_accessor :rules
 
-        def initialize(args)
-            @uid = args[:uid]
+        def initialize(uid: nil, type: CPOLICY, **args)
+            @uid = uid
             unless @uid
                 self.uid = Base.baseURI + "#policy_" + Base.getuuid
             end
-            super(args.merge({uid: @uid}))
+            super(uid: @uid, type: type, **args)
             
             @rules = Hash.new
         end
@@ -53,29 +53,30 @@ module ODRL
     end
 
     class Set  < Policy
-        def initialize(args)
-            super({type: CSET}.merge(args))
+        def initialize(type: CSET, **args)
+            super(type: type, **args)
         end
     end
 
     class Offer  < Set
-        def initialize(args)
-            super({type: COFFER}.merge(args))
+        def initialize(type: COFFER, **args)
+            super(type: type, **args)
         end
     end
     class Agreement  < Set
-        def initialize(args)
-            super({type: CAGREEMENT}.merge(args))
+        def initialize(type: CAGREEMENT, **args)
+            super(type: type, **args)
         end
     end
     class Request  < Set
-        def initialize(args)
-            super({type: CREQUEST}.merge(args))
+        def initialize(type: CREQUEST, **args)
+            super(type: type, **args)
         end
     end
+
     class Privacy  < Set
-        def initialize(args)
-            super({type: CPRIVACY}.merge(args))
+        def initialize(type: CPRIVACY, **args)
+            super(type: type, **args)
         end
     end
 # ====================================================

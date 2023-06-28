@@ -7,13 +7,22 @@ require_relative "odrl/version"
 module ODRL
     class Rule < Base
         attr_accessor :uid, :constraints, :assets, :predicate, :type, :action, :assigner, :assignee
-        def initialize(args)
-            @uid = args[:uid]
+        def initialize(
+            uid: nil,
+            constraints: nil, 
+            assets: nil, 
+            predicate: nil,
+            action: nil, 
+            assigner: nil, 
+            assignee: nil,
+            type: CRULE,
+            **args)
+            @uid = uid
 
             unless @uid
                 @uid = Base.baseURI + "#rule_" + Base.getuuid
             end
-            super(args.merge({uid: @uid}))
+            super(uid: @uid, type: type, **args)
             
             @constraints = Hash.new
             @assets = Hash.new
@@ -21,15 +30,15 @@ module ODRL
             @assignee = Hash.new
             @action = Hash.new
 
-            args[:assets] = [args[:assets]] unless args[:assets].is_a? Array
-            if !(args[:assets].first.nil?)
-                args[:assets].each do |c|
+            assets = [assets] unless assets.is_a? Array
+            if !assets.first.nil?
+                assets.each do |c|
                     self.addAsset(asset: c)
                 end
             end
-            args[:constraints] = [args[:constraints]] unless args[:constraints].is_a? Array
-            if !(args[:constraints].first.nil?)
-                args[:constraints].each do |c|
+            constraints = [constraints] unless constraints.is_a? Array
+            if !constraints.first.nil?
+                constraints.each do |c|
                     self.addConstraint(constraint:  c)
                 end
             end
@@ -99,32 +108,20 @@ module ODRL
 
 
     class Permission  < Rule
-        def initialize(args)
-            super(args)
-            self.predicate = PPERMISSION
-            self.type = CPERMISSION
-
-
+        def initialize(predicate: PPERMISSION, type: CPERMISSION, **args)
+            super(predicate: predicate, type: type, **args)
         end
     end
 
     class Duty  < Rule
-        def initialize(args)
-            super(args)
-            self.predicate = PDUTY
-            self.type = CDUTY
-
-
+        def initialize(predicate: PDUTY, type: CDUTY, **args)
+            super(predicate: predicate, type: type, **args)
         end
     end
 
     class Prohibition < Rule
-        def initialize(args)
-            super(args)
-            self.predicate = PPROHIBITION
-            self.type = CPROHIBITION
-
-
+        def initialize(predicate: PPROHIBITION, type: CPROHIBITION, **args)
+            super(predicate: predicate, type: type, **args)
         end
     end
 

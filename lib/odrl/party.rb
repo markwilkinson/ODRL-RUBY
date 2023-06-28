@@ -4,19 +4,25 @@ module ODRL
 
     class Party < Base
         attr_accessor :uid, :refinements, :partOf, :predicate, :type
-        def initialize(args)
-            @uid = args[:uid]
+        def initialize(
+            uid: nil,
+            refinements: nil,
+            partOf: nil,
+            predicate: nil,
+            type: CPARTY,
+            **args
+            )
+
+            @uid = uid
             unless @uid
                 @uid = Base.baseURI + "#party_" + Base.getuuid
             end
-            super(args.merge({uid: @uid}))
-            self.type="http://www.w3.org/ns/odrl/2/Party"
+            super(uid: @uid, type: type, **args)
 
 
             @refinements = Hash.new
-            @partOf = args[:partOf]
-            @predicate = args[:predicate]
-            @type = CPARTY
+            @partOf = partOf
+            @predicate = predicate
 
             unless @predicate
                 raise "If you don't indicate a predicate (assigner/assignee) we will default to assigner.  This may not be what you want!"
@@ -30,9 +36,9 @@ module ODRL
 
 
 
-            args[:refinements] = [args[:refinements]] unless args[:refinements].is_a? Array
-            if !(args[:refinements].first.nil?)
-                args[:refinements].each do |c|
+            refinements = [refinements] unless refinements.is_a? Array
+            if !(refinements.first.nil?)
+                refinements.each do |c|
                     self.addRefinement(refinement:  c)
                 end
             end
@@ -85,9 +91,8 @@ module ODRL
     end
     class PartyCollection < Party
 
-        def initialize(args)
-            super(args)
-            self.type = "http://www.w3.org/ns/odrl/2/PartyCollection"
+        def initialize(type: CPARTYCOLLECTION, **args)
+            super(type: type, **args)
         end
     end
 

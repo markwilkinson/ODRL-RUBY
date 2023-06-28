@@ -47,14 +47,14 @@ describe ODRL::Action do
 
       it "should allow serialize" do 
          ODRL::Base.clear_repository
-         p = ODRL::Constraint.new({rightOperand: "https://example.org/business", 
+         p = ODRL::Constraint.new(rightOperand: "https://example.org/business", 
                                  leftOperand: "https://example.org/thing", 
-                                 operator: "eq"})
+                                 operator: "eq")
          d = ODRL::Action.new(value: "use")
          d.addRefinement(refinement: p)
          d.load_graph
          result = d.serialize(format: 'turtle')
-         expect(result.length).to eq 829
+         expect(result.length).to eq 992
       end
 
 

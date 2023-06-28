@@ -13,21 +13,21 @@ describe ODRL::Constraint do
 
       # :rightOperand, :leftOperand, :operator,
       it "should allow addition of operands and operator" do 
-         p = ODRL::Constraint.new({rightOperand: "https://example.org/business", 
+         p = ODRL::Constraint.new(rightOperand: "https://example.org/business", 
                                  leftOperand: "https://example.org/thing", 
-                                 operator: "eq"})
+                                 operator: "eq")
          expect(p.class).to be (ODRL::Constraint)
          expect(p.uid).to match (/\#constraint\_/)
       end
 
       it "should allow serialize" do 
          ODRL::Base.clear_repository
-         p = ODRL::Constraint.new({rightOperand: "https://example.org/business", 
+         p = ODRL::Constraint.new(rightOperand: "https://example.org/business", 
                                  leftOperand: "https://example.org/thing", 
-                                 operator: "eq"})
+                                 operator: "eq")
          p.load_graph
          result = p.serialize(format: :turtle)
-         expect(result.length).to eq 480
+         expect(result.length).to eq 571
       end
 
    end

@@ -10,17 +10,15 @@ module ODRL
     class Asset < Base
         attr_accessor :uid, :hasPolicy, :refinements, :partOf
 
-        def initialize(args)
-            @uid = args[:uid]
+        def initialize(type: CASSET, hasPolicy: nil, refinements: nil, partOf: nil, **args)
+            @uid = uid
             unless @uid
                 self.uid = Base.baseURI + "#asset_" + Base.getuuid
             end
-            super(args.merge({uid: @uid}))
-            self.type="http://www.w3.org/ns/odrl/2/Asset"
+            super(type: type, uid: @uid, **args)
 
-            @refinements = Hash.new
-            @partOf = args[:partOf]
-            @hasPolicy = args[:hasPolicy]
+            @partOf = partOf
+            @hasPolicy = hasPolicy
 
             if @hasPolicy and !(@hasPolicy.is_a? Policy) # if it exists and is the wrong type
                 raise "The policy of an Asset must be of type ODRL::Policy.  The provided value will be discarded" 
@@ -31,9 +29,10 @@ module ODRL
                 @partOf = nil
             end
 
-            args[:refinements] = [args[:refinements]] unless args[:refinements].is_a? Array
-            if !(args[:refinements].first.nil?)
-                args[:refinements].each do |c|
+            @refinements = Hash.new
+            refinements = [refinements] unless refinements.is_a? Array
+            if !(refinements.first.nil?)
+                refinements.each do |c|
                     self.addRefinement(refinement:  c)
                 end
             end
@@ -82,9 +81,8 @@ module ODRL
 
     class AssetCollection < Asset
 
-        def initialize(args)
-            super(args)
-            self.type="http://www.w3.org/ns/odrl/2/AssetCollection"
+        def initialize(type: CASSETCOLLECTION, **args)
+            super(type: type, **args)
         end
     end
 
