@@ -8,7 +8,8 @@ policy = ODRL::Offer.new(
     title: "Offer for the use of BGV Germplasm", 
     creator: "https://orcid.org/0000-0001-6960-357X", 
     description: "An offer any non-Commercial entity to use Germplasm from the BGV - UPM",
-    subject: "nagoya-constraint", # this is the CCE category
+    subject: "nagoya-constraint", # this is a tag 
+    issued: "2022-06-29"
 )
 
 asset = ODRL::Asset.new(uid: "https://fdp.bgv.cbgp.upm.es/dataset/65ffbf3d-bed1-4a9a-abf9-0116cc35b40a", title: "César Gómez Campo Banco de Germoplasma Vegetal de la UPM")

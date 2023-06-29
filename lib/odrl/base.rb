@@ -59,7 +59,7 @@ PROPERTIES = {
         subject: DCT.subject,
         uid: ODRLV.uid,
         label: RDFS.label,
-        issued: DCAT:issued,
+        issued: DCT.issued,
 }
 
 module ODRL
@@ -67,6 +67,9 @@ module ODRL
 
         @@repository = RDF::Repository.new()
                 
+        # If you add an attribute, you mustr also add it to the constructor,
+        # and to the @attribute list
+        # andn to the .load_graph 
         attr_accessor :title, :creator, :description, :subject, :baseURI, :uid, :id, :type, :label, :issued
 
         def self.baseURI
@@ -88,7 +91,8 @@ module ODRL
         def initialize(
                 title: nil, 
                 creator: nil, 
-                description: nil, 
+                description: nil,
+                issued: nil,
                 subject: nil, 
                 baseURI: "http://example.org", 
                 uid:, 
@@ -99,6 +103,7 @@ module ODRL
 
                 @title = title
                 @creator = creator
+                @issued = issued
                 @description = description
                 @subject = subject
                 @baseURI = baseURI || ODRL::Base.baseURI
@@ -192,14 +197,15 @@ module ODRL
         end
 
         def load_graph
-                [:title, :label, :creator, :description, :subject, :uid, :id, :type].each do |method|
+                [:title, :label, :issued, :creator, :description, :subject, :uid, :id, :type].each do |method|
                         next unless self.send(method)
                         next if self.send(method).empty?
-                        subject = self.uid
-                        predicate = PROPERTIES[method]
+                        subject = self.uid   # me!
+                        predicate = PROPERTIES[method]  # look up the predicate for this property
                         # warn "prediate #{predicate} for method #{method}"
-                        object = self.send(method)
-                        repo = self.repository
+                        object = self.send(method)  # get the value of this property from self
+                        # warn "value #{object.to_s}"
+                        repo = self.repository  
                         triplify(subject, predicate, object, repo)
                 end
         end
