@@ -1,8 +1,6 @@
-# THIS IS BARELY READY FOR USE!  DON'T EXPECT MIRACLES
-
 # ODRL::Ruby
 
-This is a gem to build ODRL records, and serialize them
+This is a gem to build ODRL records, and serialize them. Does not cover the full ODRL model (yet!)
 
 ## Installation
 
