@@ -59,6 +59,7 @@ PROPERTIES = {
         subject: DCT.subject,
         uid: ODRLV.uid,
         label: RDFS.label,
+        issued: DCAT:issued,
 }
 
 module ODRL
@@ -66,7 +67,7 @@ module ODRL
 
         @@repository = RDF::Repository.new()
                 
-        attr_accessor :title, :creator, :description, :subject, :baseURI, :uid, :id, :type, :label
+        attr_accessor :title, :creator, :description, :subject, :baseURI, :uid, :id, :type, :label, :issued
 
         def self.baseURI
                 return ENV['ODRL_BASEURI'] || "http://example.org"

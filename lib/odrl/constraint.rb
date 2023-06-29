@@ -1,104 +1,105 @@
 # frozen_string_literal: true
 
 module ODRL
+  class Constraint < Base
+    attr_accessor :uid, :rightOperand, :leftOperand, :operator, :rightOperandReference, :dataType, :unit, :status
 
-    class Constraint < Base
-        
-        attr_accessor :uid, :rightOperand, :leftOperand, :operator, :rightOperandReference, :dataType, :unit, :status
-        def initialize(
-            uid: nil,
-            rightOperand:,
-            operator:,
-            leftOperand:,
-            rightOPerandReference: nil, 
-            dataType: nil,
-            unit: nil,
-            status: nil,
-            type: CCONSTRAINT,
-            **args)
+    def initialize(
+      rightOperand:, operator:, leftOperand:, uid: nil,
+      rightOPerandReference: nil,
+      dataType: nil,
+      unit: nil,
+      status: nil,
+      type: CCONSTRAINT,
+      **args
+    )
 
-            @uid = uid
-            unless @uid
-                @uid = Base.baseURI + "#constraint_" + Base.getuuid
-            end
-            super(uid: @uid, type: type, **args)
+      @uid = uid
+      @uid ||= Base.baseURI + "#constraint_" + Base.getuuid
+      super(uid: @uid, type: type, **args)
 
-            @rightOperand = rightOperand
-            raise "Constraints must haves a Right operand such as 'event' - I'm dead!" unless @rightOperand
-            @rightOperand = "http://www.w3.org/ns/odrl/2/#{@rightOperand}" unless @rightOperand =~ /https?:\/\//  # if it is already a URI, then let it go
+      @rightOperand = rightOperand
+      raise "Constraints must haves a Right operand such as 'event' - I'm dead!" unless @rightOperand
 
-            @leftOperand = leftOperand
-            raise "Constraints must haves a Left Operand such as 'http://some.event.org/on-now' - I'm dead!" unless @leftOperand
-            @leftOperand = "http://www.w3.org/ns/odrl/2/#{@leftOperand}" unless @leftOperand =~ /https?:\/\//  # if it is already a URI, then let it go
+      # if it is already a URI, then let it go
+      @rightOperand = "http://www.w3.org/ns/odrl/2/#{@rightOperand}" unless @rightOperand =~ %r{https?://}
 
-            @operator = operator
-            raise "Constraints must haves an operator such as 'eq' - I'm dead!" unless @operator
-            @operator = "http://www.w3.org/ns/odrl/2/#{@operator}" unless @operator =~ /https?:\/\//  # if it is already a URI, then let it go
+      @leftOperand = leftOperand
+      unless @leftOperand
+        raise "Constraints must haves a Left Operand such as 'http://some.event.org/on-now' - I'm dead!"
+      end
 
-            @rightOperandReference = rightOperandReference
-            @dataType = dataType
-            @unit = unit
-            @status = status
-        end
+      # if it is already a URI, then let it go
+      @leftOperand = "http://www.w3.org/ns/odrl/2/#{@leftOperand}" unless @leftOperand =~ %r{https?://}
 
-        def load_graph
-            super
-            # TODO  This is bad DRY!!  Put the bulk of this method into the base object
-            if self.rightOperand
-                predicate = PRIGHT
-                object = self.rightOperand
-                subject = self.uid
-                repo = self.repository
-                triplify(subject, predicate, object, repo)
-            end
-            if self.leftOperand
-                predicate = PLEFT
-                object = self.leftOperand
-                subject = self.uid
-                repo = self.repository
-                triplify(subject, predicate, object, repo)
-            end
-            if self.operator
-                predicate = POPERATOR
-                object = self.operator
-                subject = self.uid
-                repo = self.repository
-                triplify(subject, predicate, object, repo)
-            end
-            if self.rightOperandReference
-                predicate = POPERANDREFERENCE
-                object = self.rightOperandReference
-                subject = self.uid
-                repo = self.repository
-                triplify(subject, predicate, object, repo)
-            end
-            if self.dataType
-                predicate = PDATATYPE
-                object = self.dataType
-                subject = self.uid
-                repo = self.repository
-                triplify(subject, predicate, object, repo)
-            end
-            if self.unit
-                predicate = PUNIT
-                object = self.unit
-                subject = self.uid
-                repo = self.repository
-                triplify(subject, predicate, object, repo)
-            end
-            if self.status
-                predicate = PSTATUS
-                object = self.status
-                subject = self.uid
-                repo = self.repository
-                triplify(subject, predicate, object, repo)
-            end
-        end
+      @operator = operator
+      raise "Constraints must haves an operator such as 'eq' - I'm dead!" unless @operator
 
-        def serialize(format:)
-            super
-        end
+      # if it is already a URI, then let it go
+      @operator = "http://www.w3.org/ns/odrl/2/#{@operator}" unless @operator =~ %r{https?://}
 
+      @rightOperandReference = rightOperandReference
+      @dataType = dataType
+      @unit = unit
+      @status = status
     end
 
+    def load_graph
+      super
+      # TODO: This is bad DRY!!  Put the bulk of this method into the base object
+      if rightOperand
+        predicate = PRIGHT
+        object = rightOperand
+        subject = uid
+        repo = repository
+        triplify(subject, predicate, object, repo)
+      end
+      if leftOperand
+        predicate = PLEFT
+        object = leftOperand
+        subject = uid
+        repo = repository
+        triplify(subject, predicate, object, repo)
+      end
+      if operator
+        predicate = POPERATOR
+        object = operator
+        subject = uid
+        repo = repository
+        triplify(subject, predicate, object, repo)
+      end
+      if rightOperandReference
+        predicate = POPERANDREFERENCE
+        object = rightOperandReference
+        subject = uid
+        repo = repository
+        triplify(subject, predicate, object, repo)
+      end
+      if dataType
+        predicate = PDATATYPE
+        object = dataType
+        subject = uid
+        repo = repository
+        triplify(subject, predicate, object, repo)
+      end
+      if unit
+        predicate = PUNIT
+        object = unit
+        subject = uid
+        repo = repository
+        triplify(subject, predicate, object, repo)
+      end
+      return unless status
+
+      predicate = PSTATUS
+      object = status
+      subject = uid
+      repo = repository
+      triplify(subject, predicate, object, repo)
+    end
+
+    def serialize(format:)
+      super
+    end
+  end
 end
