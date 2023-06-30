@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email = ["markw@illuminae.com"]
 
   spec.summary = "builds ODRL files."
-  spec.description = "builds ODRL files nicely."
+  spec.description = "A builder for ODRL files. Does basic validation against core ODRL vocabularies. Has a Builder that allows you to create ODRL Profiles to extend the core vocabulary.  DOES NOT validate against a profile.  DOES NOT cover the full ODRL specificaiton, only the bits that I needed!"
   spec.homepage = "https://example.org"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 2.6.0"
