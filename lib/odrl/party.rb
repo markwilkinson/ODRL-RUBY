@@ -18,8 +18,8 @@ module ODRL
       super(uid: @uid, type: type, **args)
 
       @refinements = {}
-      @partOf = partOf
-      @predicate = predicate
+      @partOf = {}
+      @predicate = predicate.to_s
 
       if @predicate&.match(/https?:/)
         # do nothing! It's their choice to send a full predicate!
@@ -42,10 +42,17 @@ module ODRL
         end
       end
 
-      return unless @partOf and !(@partOf.is_a? PartyCollection) # if it exists and is the wrong type
+      partOf = [partOf] unless partOf.is_a? Array
+      unless partOf.first.nil?
+        partOf.each do |p|
+          p.addPart(part: self)
+        end
+      end
 
-      raise "The parent collection of a Party must be of type ODRL::PaertyCollection."
-      # @partOf = nil
+      unless @partOf and !(@partOf.is_a? PartyCollection) # if it exists and is the wrong type
+        raise "The parent collection of a Party must be of type ODRL::PaertyCollection."
+      end
+
     end
 
     def addRefinement(refinement: args)
@@ -55,16 +62,15 @@ module ODRL
     end
 
     def addPart(part: args)
-      raise "Party cannot be added as part of something that is not an PartyCollection" unless is_a?(PartyCollection)
-      raise "Only Parties can be added as part of PartyCollections" unless part.is_a?(Asset)
-
+      raise "Party cannot be added as part of something that is not an PartyCollection" unless self.is_a?(PartyCollection)
       part.partOf[uid] = [PPARTOF, self]
     end
 
     def load_graph
       super
       # TODO: This is bad DRY!!  Put the bulk of this method into the base object
-      %i[refinements partOf].each do |connected_object_type|
+      # TODO:  Currently we don't support partOf
+      %i[refinements].each do |connected_object_type|
         next unless send(connected_object_type)
 
         send(connected_object_type).each do |_uid, typedconnection|

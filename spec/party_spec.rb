@@ -38,10 +38,10 @@ describe ODRL::Party do
       expect(p.is_a?(ODRL::PartyCollection)).to be(true)
     end
 
-    it "a Party should allow to be part of an PartyCollection" do
+    it "a Party should allow to be part of a PartyCollection" do
       ac = ODRL::PartyCollection.new(predicate: PASSIGNER)
       a = ODRL::Party.new(predicate: PASSIGNER, partOf: ac)
-      expect(a.partOf.class).to be(ODRL::PartyCollection)
+      expect(a.partOf[ac.uid][1].class).to be(ODRL::PartyCollection)
     end
 
     it "a Party should refuse to be part of a non AssetCollection" do

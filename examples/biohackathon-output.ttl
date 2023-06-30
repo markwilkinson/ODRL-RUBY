@@ -1,47 +1,63 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 
-<http://example.org#action_68785487525736>
-    <http://purl.org/dc/terms/identifier> <http://example.org#action_68785487525736> ;
-    a <http://www.w3.org/ns/odrl/2/Action> .
-
-<http://example.org#constraint_68785487525880>
-    <http://purl.org/dc/terms/identifier> <http://example.org#constraint_68785487525880> ;
+<http://example.org#constraint_68811358965684>
+    <http://purl.org/dc/terms/identifier> <http://example.org#constraint_68811358965684> ;
     <http://purl.org/dc/terms/title> "Only during the hackathon"@en ;
     a <http://www.w3.org/ns/odrl/2/Constraint> ;
+    <http://www.w3.org/2000/01/rdf-schema#label> "Only during the hackathon"@en ;
     <http://www.w3.org/ns/odrl/2/leftOperand> <http://www.w3.org/ns/odrl/2/event> ;
     <http://www.w3.org/ns/odrl/2/operator> <http://www.w3.org/ns/odrl/2/eq> ;
-    <http://www.w3.org/ns/odrl/2/rightOperand> <https://2023.biohackathon.org> .
+    <http://www.w3.org/ns/odrl/2/rightOperand> <https://2023.biohackathon.org> ;
+    <http://www.w3.org/ns/odrl/2/uid> <http://example.org#constraint_68811358965684> .
 
-<http://example.org#policy_68785487446247>
+<http://example.org#policy_68811358965627>
     <http://purl.org/dc/terms/creator> <https://orcid.org/0000-0001-6960-357X> ;
     <http://purl.org/dc/terms/description> "An offer for Toshiaki-san to use the polyA data during the hackathon"@en ;
-    <http://purl.org/dc/terms/identifier> <http://example.org#policy_68785487446247> ;
+    <http://purl.org/dc/terms/identifier> <http://example.org#policy_68811358965627> ;
     <http://purl.org/dc/terms/subject> "collaboration"@en ;
     <http://purl.org/dc/terms/title> "Offer to Toshiaki-san"@en ;
     a <http://www.w3.org/ns/odrl/2/Offer> ;
-    <http://www.w3.org/ns/odrl/2/permission> <http://example.org#rule_68785487525598> .
+    <http://www.w3.org/2000/01/rdf-schema#label> "Offer to Toshiaki-san"@en ;
+    <http://www.w3.org/ns/odrl/2/permission> <http://example.org#rule_68811358965667> ;
+    <http://www.w3.org/ns/odrl/2/uid> <http://example.org#policy_68811358965627> .
 
-<http://example.org#rule_68785487525598>
-    <http://purl.org/dc/terms/identifier> <http://example.org#rule_68785487525598> ;
+<http://example.org#rule_68811358965667>
+    <http://purl.org/dc/terms/identifier> <http://example.org#rule_68811358965667> ;
     <http://purl.org/dc/terms/title> "Permission to use"@en ;
     a <http://www.w3.org/ns/odrl/2/Permission> ;
-    <http://www.w3.org/ns/odrl/2/action> <http://example.org#action_68785487525736> ;
+    <http://www.w3.org/2000/01/rdf-schema#label> "Permission to use"@en ;
+    <http://www.w3.org/ns/odrl/2/action> <http://www.w3.org/ns/odrl/2/use> ;
     <http://www.w3.org/ns/odrl/2/assignee> <https://orcid.org/0000-0001-6960-357X> ;
     <http://www.w3.org/ns/odrl/2/assigner> <https://orcid.org/0000-0003-2391-0384> ;
-    <http://www.w3.org/ns/odrl/2/constraint> <http://example.org#constraint_68785487525880> ;
-    <http://www.w3.org/ns/odrl/2/target> <http://mark.wilkinson.org/data/polyA> .
+    <http://www.w3.org/ns/odrl/2/constraint> <http://example.org#constraint_68811358965684> ;
+    <http://www.w3.org/ns/odrl/2/target> <http://mark.wilkinson.org/data/polyA> ;
+    <http://www.w3.org/ns/odrl/2/uid> <http://example.org#rule_68811358965667> .
 
 <http://mark.wilkinson.org/data/polyA>
     <http://purl.org/dc/terms/identifier> <http://mark.wilkinson.org/data/polyA> ;
     <http://purl.org/dc/terms/title> "Mark's PolyA Database"@en ;
-    a <http://www.w3.org/ns/odrl/2/Asset> .
+    a <http://www.w3.org/ns/odrl/2/Asset> ;
+    <http://www.w3.org/2000/01/rdf-schema#label> "Mark's PolyA Database"@en ;
+    <http://www.w3.org/ns/odrl/2/uid> <http://mark.wilkinson.org/data/polyA> .
+
+<http://www.w3.org/ns/odrl/2/use>
+    <http://purl.org/dc/terms/identifier> <http://www.w3.org/ns/odrl/2/use> ;
+    a "type"@en ;
+    <http://www.w3.org/2000/01/rdf-schema#label> ""@en ;
+    <http://www.w3.org/ns/odrl/2/uid> <http://www.w3.org/ns/odrl/2/use> ;
+    <https://schema.org/name> ""@en .
 
 <https://orcid.org/0000-0001-6960-357X>
     <http://purl.org/dc/terms/identifier> <https://orcid.org/0000-0001-6960-357X> ;
     <http://purl.org/dc/terms/title> "Mark D Wilkinson"@en ;
-    a <http://www.w3.org/ns/odrl/2/Party> .
+    a <http://www.w3.org/ns/odrl/2/Party> ;
+    <http://www.w3.org/2000/01/rdf-schema#label> "Mark D Wilkinson"@en ;
+    <http://www.w3.org/ns/odrl/2/uid> <https://orcid.org/0000-0001-6960-357X> .
 
 <https://orcid.org/0000-0003-2391-0384>
     <http://purl.org/dc/terms/identifier> <https://orcid.org/0000-0003-2391-0384> ;
     <http://purl.org/dc/terms/title> "Toshiaki Katayama"@en ;
-    a <http://www.w3.org/ns/odrl/2/Party> .
+    a <http://www.w3.org/ns/odrl/2/Party> ;
+    <http://www.w3.org/2000/01/rdf-schema#label> "Toshiaki Katayama"@en ;
+    <http://www.w3.org/ns/odrl/2/uid> <https://orcid.org/0000-0003-2391-0384> .
+
