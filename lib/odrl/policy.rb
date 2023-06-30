@@ -6,7 +6,7 @@ module ODRL
   class Error < StandardError; end
 
   class Policy < Base
-    attr_accessor :rules
+    attr_accessor :rules, :profiles
 
     def initialize(uid: nil, type: CPOLICY, **args)
       @uid = uid
@@ -14,6 +14,7 @@ module ODRL
       super(uid: @uid, type: type, **args)
 
       @rules = {}
+      @profiles = {}
     end
 
     def addDuty(rule:)
@@ -31,6 +32,11 @@ module ODRL
       rules[uid] = [PPROHIBITION, rule]
     end
 
+    def addProfile(profile:)
+      uid = profile.uid
+      profiles[uid] = [PPROFILE, uid]
+    end
+
     def load_graph
       super
       rules.each do |_uid, rulepair|
@@ -41,6 +47,16 @@ module ODRL
         triplify(subject, predicate, object, repo)
         ruleobject.load_graph # start the cascade
       end
+
+      # TODO make test for profiles
+      profiles.each do |_uid, profile_pair|
+        predicate, profileuri = profile_pair # e.g. "permission", RuleObject
+        object = profileuri
+        subject = uid
+        repo = repository
+        triplify(subject, predicate, object, repo)
+      end
+
     end
 
     def serialize(format:)
