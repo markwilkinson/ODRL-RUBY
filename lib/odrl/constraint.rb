@@ -22,9 +22,12 @@ module ODRL
       raise "Constraints must haves a Right operand such as 'event' - I'm dead!" unless @rightOperand
 
       # if it is already a URI, then let it go
-      @rightOperand = "http://www.w3.org/ns/odrl/2/#{@rightOperand}" unless @rightOperand =~ %r{https?://}
+      # @rightOperand = "http://www.w3.org/ns/odrl/2/#{@rightOperand}" unless @rightOperand =~ %r{https?://}
 
       @leftOperand = leftOperand
+      unless LEFTOPERANDS.include?(@leftOperand)
+        warn "The selected leftOperand is not part of the default set... just sayin'"
+      end
       unless @leftOperand
         raise "Constraints must haves a Left Operand such as 'http://some.event.org/on-now' - I'm dead!"
       end
@@ -34,6 +37,8 @@ module ODRL
 
       @operator = operator
       raise "Constraints must haves an operator such as 'eq' - I'm dead!" unless @operator
+
+      warn "The selected operator is not part of the default set... just sayin'" unless OPERATORS.include?(@operator)
 
       # if it is already a URI, then let it go
       @operator = "http://www.w3.org/ns/odrl/2/#{@operator}" unless @operator =~ %r{https?://}

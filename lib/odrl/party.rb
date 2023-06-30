@@ -21,14 +21,18 @@ module ODRL
       @partOf = partOf
       @predicate = predicate
 
-      if @predicate
-        unless [PASSIGNER, PASSIGNEE].include? @predicate
-          raise "You didn't indicate a valid predicate (assigner/assignee) so we will default to assigner.  This may not be what you want!"
-          @predicate = PASSIGNER
+      if @predicate&.match(/https?:/)
+        # do nothing! It's their choice to send a full predicate!
+      elsif @predicate  # we're guessing it will be a string from the valid list?
+        unless PARTYFUNCTIONS.include? @predicate
+          raise "You didn't indicate a valid predicate"
+          # @predicate = ODRLV.assigner
+        else
+          @predicate = "#{ODRLV.to_s}#{predicate}" # make the URI form of the valid predicate
         end
-      else
-        raise "If you don't indicate a predicate (assigner/assignee) we will default to assigner.  This may not be what you want!"
-        @predicate = "http://www.w3.org/ns/odrl/2/assigner"
+      elsif @predicate.nil?
+        raise "If you don't indicate a predicate at all"
+        # @predicate = ODRLV.assigner
       end
 
       refinements = [refinements] unless refinements.is_a? Array
@@ -40,8 +44,8 @@ module ODRL
 
       return unless @partOf and !(@partOf.is_a? PartyCollection) # if it exists and is the wrong type
 
-      raise "The parent collection of a Party must be of type ODRL::PaertyCollection.  The provided value will be discarded"
-      @partOf = nil
+      raise "The parent collection of a Party must be of type ODRL::PaertyCollection."
+      # @partOf = nil
     end
 
     def addRefinement(refinement: args)
