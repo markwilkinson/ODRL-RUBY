@@ -1,4 +1,4 @@
-require '../lib/odrl/profile/builder.rb'
+require 'odrl/profile/builder'
 
 p = ODRL::Profile::Builder.new(
     uri: 'https://example.org/myprofiles/germplasm_odrl_profile.ttl',
