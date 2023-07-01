@@ -16,7 +16,7 @@ module ODRL
   module Profile
     class Builder
       attr_accessor :uri, :profile_class, :repository, :title, :description, :author 
-      attr_accessor :asset_relations, :party_functional_roles, :actions, :leftOperands, :rightOperands
+      attr_accessor :asset_relations, :party_functional_roles, :actions, :leftOperands, :rightOperands, :operators
 
       # attr_accessor :logicalConstraints, :conflict_strategies, :rules
       def initialize(uri:, profile_class:, title:, description:, author:)
@@ -31,6 +31,7 @@ module ODRL
         @actions = []
         @leftOperands = []
         @rightOperands = []
+        @operators = []
         @asset_relations = []
 
         # Required declarations of disjointedness
@@ -49,7 +50,7 @@ module ODRL
         description and ODRL::Profile::Builder.triplify(uri, DCT.title, description, repo)
         author and ODRL::Profile::Builder.triplify(uri, DC.creator, author, repo)
 
-        [asset_relations, party_functional_roles, actions, leftOperands, rightOperands, asset_relations].flatten.each do |elem|
+        [asset_relations, party_functional_roles, actions, leftOperands, rightOperands, operators].flatten.each do |elem|
           elem.build(repo: repo)
         end
       end
@@ -173,7 +174,7 @@ module ODRL
       end
     end
 
-    class Relation < ProfileElement
+    class Operator < ProfileElement
       # ex:myOperator a odrl:Operator .
       def build(repo:)
         ODRL::Profile::Builder.triplify(uri, RDF.type, ODRLV.Operator, repo)
