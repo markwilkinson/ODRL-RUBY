@@ -134,7 +134,7 @@ module ODRL
       end
     end
 
-    class Rule < ProfileElement
+    class Action < ProfileElement
       # ex:myAction a odrl:Action .
       # ex:myAction odrl:includedIn odrl:use .
       # ex:myAction odrl:implies odrl:distribute .

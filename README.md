@@ -88,12 +88,12 @@ p.asset_relations << ODRL::Profile::AssetRelation.new(
     definition: "Permission is a special thing in the Nagoya protocol")
 
 
-p.party_functional_roles << ODRL::Profile::AssetRelation.new(  
+p.party_functional_roles << ODRL::Profile::PartyFunction.new(  
     uri: "https://example.org/myprofiles/ontology#nagoya_assigner",
     label: "Assigner with Nagoya authority to assign", 
     definition: "Assigners have special responsibilities in the Nagoya protocol")
 
-p.actions << ODRL::Profile::Rule.new( 
+p.actions << ODRL::Profile::Action.new( 
     uri: "https://example.org/myprofiles/ontology#nagoya_propogate",
     label: "Plant and Harvest", 
     definition: "the action of planting and harvesting the seed", 
@@ -111,7 +111,7 @@ p.rightOperands << ODRL::Profile::RightOperand.new(
     label: "On Watchlist", 
     definition: "A species whose risk of extinction is on a watchlist")
 
-p.rightOperands << ODRL::Profile::Relation.new( 
+p.operators << ODRL::Profile::Operator.new( 
     uri: "https://example.org/myprofiles/ontology#within_risk_boundary",
     label: "Within Bounds", 
     definition: "comparison of risk boundaries")
@@ -119,6 +119,7 @@ p.rightOperands << ODRL::Profile::Relation.new(
 
 p.build()
 puts p.serialize
+
 ```
 
 

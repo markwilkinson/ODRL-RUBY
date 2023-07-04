@@ -19,7 +19,7 @@ p.party_functional_roles << ODRL::Profile::PartyFunction.new(
     label: "Assigner with Nagoya authority to assign", 
     definition: "Assigners have special responsibilities in the Nagoya protocol")
 
-p.actions << ODRL::Profile::Rule.new( 
+p.actions << ODRL::Profile::Action.new( 
     uri: "https://example.org/myprofiles/ontology#nagoya_propogate",
     label: "Plant and Harvest", 
     definition: "the action of planting and harvesting the seed", 
