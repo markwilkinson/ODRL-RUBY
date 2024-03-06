@@ -11,54 +11,95 @@ OBO = RDF::Vocabulary.new("http://purl.obolibrary.org/obo/")
 XSD = RDF::Vocabulary.new("http://www.w3.org/2001/XMLSchema#")
 SCHEMA = RDF::Vocabulary.new("https://schema.org/")
 OWL = RDF::Vocabulary.new("http://www.w3.org/2002/07/owl#")
+PROFILE = RDF::Vocabulary.new("http://www.w3.org/ns/dx/prof/")
 
 module ODRL
   module Profile
     class Builder
-      attr_accessor :uri, :profile_class, :repository, :title, :description, :author 
-      attr_accessor :asset_relations, :party_functional_roles, :actions, :leftOperands, :rightOperands, :operators
+      attr_accessor :uri, :repository, :title, :description, :author, :version, :license, :prefix, :separator, :fullURI
+      attr_accessor :prefixes, :policies, :asset_relations, :party_functional_roles, :actions, :leftOperands, :rightOperands, :operators, :skosMembers
 
       # attr_accessor :logicalConstraints, :conflict_strategies, :rules
-      def initialize(uri:, profile_class:, title:, description:, author:)
+      def initialize(uri:, title:, description:, author:, version:, license:, prefix: "ex", separator: "#")
         @uri = uri
-        @profile_class = profile_class
         @title = title
         @description = description
         @author = author
+        @version = version
+        @license = license
+        @prefix = prefix
+        @separator = separator
         @repository = RDF::Repository.new
+        @prefixes = {}
+        @policies = []
         @asset_relations = []
         @party_functional_roles = []
         @actions = []
         @leftOperands = []
         @rightOperands = []
         @operators = []
-        @asset_relations = []
+        @skosMembers = []
 
-        # Required declarations of disjointedness
-        ODRL::Profile::Builder.triplify(@profile_class, RDFS.subClassOf, ODRLV.Policy, @repository)
-        ODRL::Profile::Builder.triplify(@profile_class, OWL.disjointWith, ODRLV.Agreement, @repository)
-        ODRL::Profile::Builder.triplify(@profile_class, OWL.disjointWith, ODRLV.Offer, @repository)
-        ODRL::Profile::Builder.triplify(@profile_class, OWL.disjointWith, ODRLV.Privacy, @repository)
-        ODRL::Profile::Builder.triplify(@profile_class, OWL.disjointWith, ODRLV.Request, @repository)
-        ODRL::Profile::Builder.triplify(@profile_class, OWL.disjointWith, ODRLV.Ticket, @repository)
-        ODRL::Profile::Builder.triplify(@profile_class, OWL.disjointWith, ODRLV.Assertion, @repository)
+        @fullURI = @uri + @separator
+
+        @prefixes.store(@prefix, @fullURI)
+
+        ODRL::Profile::Builder.triplify(@uri, RDF.type, OWL.Ontology, @repository)
+        ODRL::Profile::Builder.triplify(@uri, RDF.type, PROFILE.Profile, @repository)
+        ODRL::Profile::Builder.triplify(@uri, RDFS.label, @title, @repository)
+        ODRL::Profile::Builder.triplify(@uri, OWL.versionInfo, @version, @repository)
+        ODRL::Profile::Builder.triplify(@uri, DCT.title, title, @repository)
+        ODRL::Profile::Builder.triplify(@uri, DCT.description, description, @repository)
+        ODRL::Profile::Builder.triplify(@uri, DCT.creator, author, @repository)
+        ODRL::Profile::Builder.triplify(@uri, DCT.license, license, @repository)
+
+        # SKOS
+        ODRL::Profile::Builder.triplify(@fullURI, RDF.type, SKOS.Collection, @repository)
+        ODRL::Profile::Builder.triplify(@fullURI, SKOS.prefLabel, "Profile Vocabulary", @repository)
       end
 
       def build
         repo = repository # just shorter :-)
-        title and ODRL::Profile::Builder.triplify(uri, DCT.title, title, repo)
-        description and ODRL::Profile::Builder.triplify(uri, DCT.title, description, repo)
-        author and ODRL::Profile::Builder.triplify(uri, DC.creator, author, repo)
 
-        [asset_relations, party_functional_roles, actions, leftOperands, rightOperands, operators].flatten.each do |elem|
+        [policies, asset_relations, party_functional_roles, actions, leftOperands, rightOperands, operators].flatten.each do |elem|
+          ODRL::Profile::Builder.triplify(elem.uri, RDFS.isDefinedBy, @fullURI, repo)
+          elem.parent_property and ODRL::Profile::Builder.triplify(elem.uri, RDFS.subPropertyOf, elem.parent_property, repo)
+          elem.parent_class and ODRL::Profile::Builder.triplify(elem.uri, RDFS.subClassOf, elem.parent_class, repo)
+
           elem.build(repo: repo)
+
+          @skosMembers << elem.uri
+        end
+      end
+
+      def build_skos(uri, members, label, repo)
+        ODRL::Profile::Builder.triplify(uri, RDF.type, SKOS.Collection, repo)
+        ODRL::Profile::Builder.triplify(uri, SKOS.prefLabel, label, repo)
+
+        members.each do |_uri|
+          ODRL::Profile::Builder.triplify(uri, SKOS.member, _uri.uri, repo)
         end
       end
 
       def serialize(format: :turtle)
         format = format.to_sym
+
+        ## All profile SKOS members
+        @skosMembers.each do |member|
+          ODRL::Profile::Builder.triplify(@fullURI, SKOS.member, member, @repository)
+        end
+
+        ## Specific profile SKOS members
+        build_skos(@fullURI + "policies", @actions, "Policies", @repository)
+        build_skos(@fullURI + "actions", @actions, "Actions for Rules", @repository)
+        build_skos(@fullURI + "asset_relations", @asset_relations, "Asset Relations", @repository)
+        build_skos(@fullURI + "partyFunctions", @party_functional_roles, "Party Functions", @repository)
+        build_skos(@fullURI + "constraintLeftOperand", @leftOperands, "Left Operands", @repository)
+        build_skos(@fullURI + "constraintRightOperand", @rightOperands, "Right Operands", @repository)
+        build_skos(@fullURI + "operators", @operators, "Operators", @repository)
+
         w = get_writer(type: format)
-        w.dump(repository)
+        w.dump(repository, nil, prefixes: @prefixes)
       end
 
       def get_writer(type: :turtle)
@@ -107,27 +148,73 @@ module ODRL
     end # end of Class Builder
 
     class ProfileElement
-      attr_accessor :uri, :label, :definition
+      attr_accessor :uri, :label, :definition, :parent_class, :parent_property
 
-      def initialize(uri:, label:, definition:, **_args)
+      # parent_class => subClassOf
+      # parent_property => subPropertyOf
+      def initialize(uri:, label:, definition:, parent_class: nil, parent_property: nil, **_args)
         @uri = uri
         @label = label
         @definition = definition
+        @parent_class = parent_class
+        @parent_property = parent_property
+      end
+    end
+
+    class Policy < ProfileElement
+      attr_accessor :disjoints
+
+      def initialize(disjoints: [], **args)
+        # Additional disjoints can added for custom policies
+        @disjoints = [
+          ODRLV.Agreement,
+          ODRLV.Offer,
+          ODRLV.Privacy,
+          ODRLV.Request,
+          ODRLV.Ticket,
+          ODRLV.Assertion
+        ].concat(disjoints)
+
+        super(**args)
+      end
+
+      # ex:myPolicy a odrl:Policy .
+      def build(repo:)
+        ODRL::Profile::Builder.triplify(uri, RDF.type, RDFS.Class, repo)
+        ODRL::Profile::Builder.triplify(uri, RDF.type, OWL.Class, repo)
+        ODRL::Profile::Builder.triplify(uri, RDF.type, SKOS.Concept, repo)
+        ODRL::Profile::Builder.triplify(uri, RDFS.label, label, repo)
+        ODRL::Profile::Builder.triplify(uri, SKOS.defintion, definition, repo)
+
+        # Required declarations of disjointedness
+        ODRL::Profile::Builder.triplify(uri, RDFS.subClassOf, ODRLV.Policy, repo)
+
+        disjoints.each do |disjoint|
+          ODRL::Profile::Builder.triplify(uri, OWL.disjointWith, disjoint, repo)
+        end
       end
     end
 
     class AssetRelation < ProfileElement
       # ex:myRelation rdfs:subPropertyOf odrl:relation .
       def build(repo:)
+        ODRL::Profile::Builder.triplify(uri, RDF.type, RDF.Property, repo)
+        ODRL::Profile::Builder.triplify(uri, RDF.type, OWL.ObjectProperty, repo)
+        ODRL::Profile::Builder.triplify(uri, RDF.type, SKOS.Concept, repo)
         ODRL::Profile::Builder.triplify(uri, RDFS.subPropertyOf, ODRLV.relation, repo)
         ODRL::Profile::Builder.triplify(uri, RDFS.label, label, repo)
         ODRL::Profile::Builder.triplify(uri, SKOS.defintion, definition, repo)
+        ODRL::Profile::Builder.triplify(uri, RDFS.domain, ODRLV.Rule, repo)
+        ODRL::Profile::Builder.triplify(uri, RDFS.range, ODRLV.Asset, repo)
       end
     end
 
     class PartyFunction < ProfileElement
       # ex:myFunctionRole rdfs:subPropertyOf odrl:function
       def build(repo:)
+        ODRL::Profile::Builder.triplify(uri, RDF.type, RDF.Property, repo)
+        ODRL::Profile::Builder.triplify(uri, RDF.type, OWL.ObjectProperty, repo)
+        ODRL::Profile::Builder.triplify(uri, RDF.type, SKOS.Concept, repo)
         ODRL::Profile::Builder.triplify(uri, RDFS.subPropertyOf, ODRLV.function, repo)
         ODRL::Profile::Builder.triplify(uri, RDFS.label, label, repo)
         ODRL::Profile::Builder.triplify(uri, SKOS.defintion, definition, repo)
@@ -148,6 +235,7 @@ module ODRL
 
       def build(repo:)
         ODRL::Profile::Builder.triplify(uri, RDF.type, ODRLV.Action, repo)
+        ODRL::Profile::Builder.triplify(uri, RDF.type, SKOS.Concept, repo)
         ODRL::Profile::Builder.triplify(uri, RDFS.label, label, repo)
         ODRL::Profile::Builder.triplify(uri, SKOS.defintion, definition, repo)
         ODRL::Profile::Builder.triplify(uri, ODRLV.includedIn, included_in, repo)
@@ -160,6 +248,8 @@ module ODRL
       # ex:myLeftOperand a odrl:LeftOperand .
       def build(repo:)
         ODRL::Profile::Builder.triplify(uri, RDF.type, ODRLV.LeftOperand, repo)
+        ODRL::Profile::Builder.triplify(uri, RDF.type, OWL.NamedIndividual, repo)
+        ODRL::Profile::Builder.triplify(uri, RDF.type, SKOS.Concept, repo)
         ODRL::Profile::Builder.triplify(uri, RDFS.label, label, repo)
         ODRL::Profile::Builder.triplify(uri, SKOS.defintion, definition, repo)
       end
