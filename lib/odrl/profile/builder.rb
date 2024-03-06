@@ -76,8 +76,8 @@ module ODRL
         ODRL::Profile::Builder.triplify(uri, RDF.type, SKOS.Collection, repo)
         ODRL::Profile::Builder.triplify(uri, SKOS.prefLabel, label, repo)
 
-        members.each do |_uri|
-          ODRL::Profile::Builder.triplify(uri, SKOS.member, _uri.uri, repo)
+        members.each do |member|
+          ODRL::Profile::Builder.triplify(uri, SKOS.member, member.uri, repo)
         end
       end
 
