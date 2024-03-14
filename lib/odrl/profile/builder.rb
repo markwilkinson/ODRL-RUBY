@@ -16,15 +16,15 @@ PROFILE = RDF::Vocabulary.new("http://www.w3.org/ns/dx/prof/")
 module ODRL
   module Profile
     class Builder
-      attr_accessor :uri, :repository, :title, :description, :author, :version, :license, :prefix, :separator, :fullURI
+      attr_accessor :uri, :repository, :title, :description, :authors, :version, :license, :prefix, :separator, :fullURI
       attr_accessor :prefixes, :policies, :asset_relations, :party_functional_roles, :actions, :leftOperands, :rightOperands, :operators, :skosMembers
 
       # attr_accessor :logicalConstraints, :conflict_strategies, :rules
-      def initialize(uri:, title:, description:, author:, version:, license:, prefix: "ex", separator: "#")
+      def initialize(uri:, title:, description:, authors:, version:, license:, prefix: "ex", separator: "#")
         @uri = uri
         @title = title
         @description = description
-        @author = author
+        @authors = authors
         @version = version
         @license = license
         @prefix = prefix
@@ -50,8 +50,11 @@ module ODRL
         ODRL::Profile::Builder.triplify(@uri, OWL.versionInfo, @version, @repository)
         ODRL::Profile::Builder.triplify(@uri, DCT.title, title, @repository)
         ODRL::Profile::Builder.triplify(@uri, DCT.description, description, @repository)
-        ODRL::Profile::Builder.triplify(@uri, DCT.creator, author, @repository)
         ODRL::Profile::Builder.triplify(@uri, DCT.license, license, @repository)
+
+        @authors.each do |author|
+          ODRL::Profile::Builder.triplify(@uri, DCT.creator, author, @repository)
+        end
 
         # SKOS
         ODRL::Profile::Builder.triplify(@fullURI, RDF.type, SKOS.Collection, @repository)
