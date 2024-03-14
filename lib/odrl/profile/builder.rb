@@ -47,13 +47,13 @@ module ODRL
         ODRL::Profile::Builder.triplify(@uri, RDF.type, OWL.Ontology, @repository)
         ODRL::Profile::Builder.triplify(@uri, RDF.type, PROFILE.Profile, @repository)
         ODRL::Profile::Builder.triplify(@uri, RDFS.label, @title, @repository)
-        ODRL::Profile::Builder.triplify(@uri, OWL.versionInfo, @version, @repository)
-        ODRL::Profile::Builder.triplify(@uri, DCT.title, title, @repository)
-        ODRL::Profile::Builder.triplify(@uri, DCT.description, description, @repository)
-        ODRL::Profile::Builder.triplify(@uri, DCT.license, license, @repository)
+        ODRL::Profile::Builder.triplify(@uri, OWL.versionInfo, @version, @repository, skip_type_or_language: true)
+        ODRL::Profile::Builder.triplify(@uri, DCT.title, @title, @repository)
+        ODRL::Profile::Builder.triplify(@uri, DCT.description, @description, @repository)
+        ODRL::Profile::Builder.triplify(@uri, DCT.license, @license, @repository)
 
         @authors.each do |author|
-          ODRL::Profile::Builder.triplify(@uri, DCT.creator, author, @repository)
+          ODRL::Profile::Builder.triplify(@uri, DCT.creator, author, @repository, skip_type_or_language: true)
         end
 
         # SKOS
@@ -109,7 +109,7 @@ module ODRL
         RDF::Writer.for(type)
       end
 
-      def self.triplify(s, p, o, repo)
+      def self.triplify(s, p, o, repo, skip_type_or_language: false)
         s = s.strip if s.instance_of?(String)
         p = p.strip if p.instance_of?(String)
         o = o.strip if o.instance_of?(String)
@@ -133,13 +133,13 @@ module ODRL
           o = if o.to_s =~ %r{^\w+:/?/?[^\s]+}
                 RDF::URI.new(o.to_s)
               elsif o.to_s =~ /^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d/
-                RDF::Literal.new(o.to_s, datatype: RDF::XSD.date)
+                RDF::Literal.new(o.to_s, datatype: (RDF::XSD.date if skip_type_or_language == false))
               elsif o.to_s =~ /^\d\.\d/
-                RDF::Literal.new(o.to_s, datatype: RDF::XSD.float)
+                RDF::Literal.new(o.to_s, datatype: (RDF::XSD.float if skip_type_or_language == false))
               elsif o.to_s =~ /^[0-9]+$/
-                RDF::Literal.new(o.to_s, datatype: RDF::XSD.int)
+                RDF::Literal.new(o.to_s, datatype: (RDF::XSD.int if skip_type_or_language == false))
               else
-                RDF::Literal.new(o.to_s, language: :en)
+                RDF::Literal.new(o.to_s, language: (:en if skip_type_or_language == false))
               end
         end
 
