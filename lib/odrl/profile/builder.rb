@@ -93,7 +93,7 @@ module ODRL
         end
 
         ## Specific profile SKOS members
-        build_skos(@fullURI + "policies", @actions, "Policies", @repository)
+        build_skos(@fullURI + "policies", @policies, "Policies", @repository)
         build_skos(@fullURI + "actions", @actions, "Actions for Rules", @repository)
         build_skos(@fullURI + "asset_relations", @asset_relations, "Asset Relations", @repository)
         build_skos(@fullURI + "partyFunctions", @party_functional_roles, "Party Functions", @repository)
