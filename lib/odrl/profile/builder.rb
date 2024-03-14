@@ -93,13 +93,13 @@ module ODRL
         end
 
         ## Specific profile SKOS members
-        build_skos(@fullURI + "policies", @policies, "Policies", @repository)
-        build_skos(@fullURI + "actions", @actions, "Actions for Rules", @repository)
-        build_skos(@fullURI + "asset_relations", @asset_relations, "Asset Relations", @repository)
-        build_skos(@fullURI + "partyFunctions", @party_functional_roles, "Party Functions", @repository)
-        build_skos(@fullURI + "constraintLeftOperand", @leftOperands, "Left Operands", @repository)
-        build_skos(@fullURI + "constraintRightOperand", @rightOperands, "Right Operands", @repository)
-        build_skos(@fullURI + "operators", @operators, "Operators", @repository)
+        @policies.length > 0 and build_skos(@fullURI + "policies", @policies, "Policies", @repository)
+        @actions.length > 0 and build_skos(@fullURI + "actions", @actions, "Actions for Rules", @repository)
+        @asset_relations.length > 0 and build_skos(@fullURI + "asset_relations", @asset_relations, "Asset Relations", @repository)
+        @party_functional_roles.length > 0 and build_skos(@fullURI + "partyFunctions", @party_functional_roles, "Party Functions", @repository)
+        @leftOperands.length > 0 and build_skos(@fullURI + "constraintLeftOperand", @leftOperands, "Left Operands", @repository)
+        @rightOperands.length > 0 and build_skos(@fullURI + "constraintRightOperand", @rightOperands, "Right Operands", @repository)
+        @operators.length > 0 and build_skos(@fullURI + "operators", @operators, "Operators", @repository)
 
         w = get_writer(type: format)
         w.dump(repository, nil, prefixes: @prefixes)
