@@ -17,7 +17,7 @@ module ODRL
   module Profile
     class Builder
       attr_accessor :uri, :repository, :title, :description, :authors, :version, :license, :prefix, :separator, :fullURI
-      attr_accessor :prefixes, :policies, :asset_relations, :party_functional_roles, :actions, :leftOperands, :rightOperands, :operators, :skosMembers
+      attr_accessor :prefixes, :policies, :permissions, :prohibitions, :duties, :asset_relations, :party_functional_roles, :actions, :leftOperands, :rightOperands, :operators, :skosMembers
 
       # attr_accessor :logicalConstraints, :conflict_strategies, :rules
       def initialize(uri:, title:, description:, authors:, version:, license:, prefix: "ex", separator: "#")
@@ -32,6 +32,9 @@ module ODRL
         @repository = RDF::Repository.new
         @prefixes = {}
         @policies = []
+        @permissions = []
+        @prohibitions = []
+        @duties = []
         @asset_relations = []
         @party_functional_roles = []
         @actions = []
@@ -64,7 +67,7 @@ module ODRL
       def build
         repo = repository # just shorter :-)
 
-        [policies, asset_relations, party_functional_roles, actions, leftOperands, rightOperands, operators].flatten.each do |elem|
+        [policies, permissions, prohibitions, duties, asset_relations, party_functional_roles, actions, leftOperands, rightOperands, operators].flatten.each do |elem|
           ODRL::Profile::Builder.triplify(elem.uri, RDFS.isDefinedBy, @fullURI, repo)
           elem.parent_property and ODRL::Profile::Builder.triplify(elem.uri, RDFS.subPropertyOf, elem.parent_property, repo)
           elem.parent_class and ODRL::Profile::Builder.triplify(elem.uri, RDFS.subClassOf, elem.parent_class, repo)
@@ -94,6 +97,9 @@ module ODRL
 
         ## Specific profile SKOS members
         @policies.length > 0 and build_skos(@fullURI + "policies", @policies, "Policies", @repository)
+        @permissions.length > 0 and build_skos(@fullURI + "permissions", @permissions, "Permissions", @repository)
+        @prohibitions.length > 0 and build_skos(@fullURI + "prohibitions", @prohibitions, "Prohibitions", @repository)
+        @duties.length > 0 and build_skos(@fullURI + "duties", @duties, "Duties", @repository)
         @actions.length > 0 and build_skos(@fullURI + "actions", @actions, "Actions for Rules", @repository)
         @asset_relations.length > 0 and build_skos(@fullURI + "asset_relations", @asset_relations, "Asset Relations", @repository)
         @party_functional_roles.length > 0 and build_skos(@fullURI + "partyFunctions", @party_functional_roles, "Party Functions", @repository)
@@ -192,9 +198,72 @@ module ODRL
         # Required declarations of disjointedness
         ODRL::Profile::Builder.triplify(uri, RDFS.subClassOf, ODRLV.Policy, repo)
 
-        disjoints.each do |disjoint|
+        @disjoints.each do |disjoint|
           ODRL::Profile::Builder.triplify(uri, OWL.disjointWith, disjoint, repo)
         end
+      end
+    end
+
+    # This class MUST NOT be used to add custom ODRL Rules. Instead, sublcasses of this class offered by the builder must be used.
+    # This class is used to define the common properties of ODRL rules.
+    # E.g: In a Policy, the newly CustomPermission has been created and can be used as follows:
+    # ex:myPolicy odrl:permission ex:myPermission .
+    # ex:myPermission a ex-profile:CustomPermission ; odrl:target <https://example.com/asset_01> ...
+    class Rule < ProfileElement
+      attr_accessor :disjoints
+
+      def initialize(disjoints: [], **args)
+        @disjoints = disjoints
+
+        super(**args)
+      end
+
+      def build(repo:)
+        ODRL::Profile::Builder.triplify(uri, RDF.type, RDFS.Class, repo)
+        ODRL::Profile::Builder.triplify(uri, RDF.type, OWL.Class, repo)
+        ODRL::Profile::Builder.triplify(uri, RDF.type, SKOS.Concept, repo)
+        ODRL::Profile::Builder.triplify(uri, RDFS.label, label, repo)
+        ODRL::Profile::Builder.triplify(uri, SKOS.defintion, definition, repo)
+
+        @disjoints.each do |disjoint|
+          ODRL::Profile::Builder.triplify(uri, OWL.disjointWith, disjoint, repo)
+        end
+      end
+    end
+
+    class Permission < Rule
+      def initialize(disjoints: [], **args)
+        super(disjoints: [ODRLV.Prohibition, ODRLV.Duty].concat(disjoints), **args)
+      end
+
+      def build(repo:)
+        ODRL::Profile::Builder.triplify(uri, RDFS.subClassOf, ODRLV.Permission, repo)
+
+        super(repo: repo)
+      end
+    end
+
+    class Prohibition < Rule
+      def initialize(disjoints: [], **args)
+        super(disjoints: [ODRLV.Permission, ODRLV.Duty].concat(disjoints), **args)
+      end
+
+      def build(repo:)
+        ODRL::Profile::Builder.triplify(uri, RDFS.subClassOf, ODRLV.Prohibition, repo)
+
+        super(repo: repo)
+      end
+    end
+
+    class Duty < Rule
+      def initialize(disjoints: [], **args)
+        super(disjoints: [ODRLV.Permission, ODRLV.Prohibition].concat(disjoints), **args)
+      end
+
+      def build(repo:)
+        ODRL::Profile::Builder.triplify(uri, RDFS.subClassOf, ODRLV.Duty, repo)
+
+        super(repo: repo)
       end
     end
 
