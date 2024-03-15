@@ -16,15 +16,15 @@ PROFILE = RDF::Vocabulary.new("http://www.w3.org/ns/dx/prof/")
 module ODRL
   module Profile
     class Builder
-      attr_accessor :uri, :repository, :title, :description, :author, :version, :license, :prefix, :separator, :fullURI
+      attr_accessor :uri, :repository, :title, :description, :authors, :version, :license, :prefix, :separator, :fullURI
       attr_accessor :prefixes, :policies, :asset_relations, :party_functional_roles, :actions, :leftOperands, :rightOperands, :operators, :skosMembers
 
       # attr_accessor :logicalConstraints, :conflict_strategies, :rules
-      def initialize(uri:, title:, description:, author:, version:, license:, prefix: "ex", separator: "#")
+      def initialize(uri:, title:, description:, authors:, version:, license:, prefix: "ex", separator: "#")
         @uri = uri
         @title = title
         @description = description
-        @author = author
+        @authors = authors
         @version = version
         @license = license
         @prefix = prefix
@@ -47,11 +47,14 @@ module ODRL
         ODRL::Profile::Builder.triplify(@uri, RDF.type, OWL.Ontology, @repository)
         ODRL::Profile::Builder.triplify(@uri, RDF.type, PROFILE.Profile, @repository)
         ODRL::Profile::Builder.triplify(@uri, RDFS.label, @title, @repository)
-        ODRL::Profile::Builder.triplify(@uri, OWL.versionInfo, @version, @repository)
-        ODRL::Profile::Builder.triplify(@uri, DCT.title, title, @repository)
-        ODRL::Profile::Builder.triplify(@uri, DCT.description, description, @repository)
-        ODRL::Profile::Builder.triplify(@uri, DCT.creator, author, @repository)
-        ODRL::Profile::Builder.triplify(@uri, DCT.license, license, @repository)
+        ODRL::Profile::Builder.triplify(@uri, OWL.versionInfo, @version, @repository, skip_type_or_language: true)
+        ODRL::Profile::Builder.triplify(@uri, DCT.title, @title, @repository)
+        ODRL::Profile::Builder.triplify(@uri, DCT.description, @description, @repository)
+        ODRL::Profile::Builder.triplify(@uri, DCT.license, @license, @repository)
+
+        @authors.each do |author|
+          ODRL::Profile::Builder.triplify(@uri, DCT.creator, author, @repository, skip_type_or_language: true)
+        end
 
         # SKOS
         ODRL::Profile::Builder.triplify(@fullURI, RDF.type, SKOS.Collection, @repository)
@@ -90,13 +93,13 @@ module ODRL
         end
 
         ## Specific profile SKOS members
-        build_skos(@fullURI + "policies", @actions, "Policies", @repository)
-        build_skos(@fullURI + "actions", @actions, "Actions for Rules", @repository)
-        build_skos(@fullURI + "asset_relations", @asset_relations, "Asset Relations", @repository)
-        build_skos(@fullURI + "partyFunctions", @party_functional_roles, "Party Functions", @repository)
-        build_skos(@fullURI + "constraintLeftOperand", @leftOperands, "Left Operands", @repository)
-        build_skos(@fullURI + "constraintRightOperand", @rightOperands, "Right Operands", @repository)
-        build_skos(@fullURI + "operators", @operators, "Operators", @repository)
+        @policies.length > 0 and build_skos(@fullURI + "policies", @policies, "Policies", @repository)
+        @actions.length > 0 and build_skos(@fullURI + "actions", @actions, "Actions for Rules", @repository)
+        @asset_relations.length > 0 and build_skos(@fullURI + "asset_relations", @asset_relations, "Asset Relations", @repository)
+        @party_functional_roles.length > 0 and build_skos(@fullURI + "partyFunctions", @party_functional_roles, "Party Functions", @repository)
+        @leftOperands.length > 0 and build_skos(@fullURI + "constraintLeftOperand", @leftOperands, "Left Operands", @repository)
+        @rightOperands.length > 0 and build_skos(@fullURI + "constraintRightOperand", @rightOperands, "Right Operands", @repository)
+        @operators.length > 0 and build_skos(@fullURI + "operators", @operators, "Operators", @repository)
 
         w = get_writer(type: format)
         w.dump(repository, nil, prefixes: @prefixes)
@@ -106,7 +109,7 @@ module ODRL
         RDF::Writer.for(type)
       end
 
-      def self.triplify(s, p, o, repo)
+      def self.triplify(s, p, o, repo, skip_type_or_language: false)
         s = s.strip if s.instance_of?(String)
         p = p.strip if p.instance_of?(String)
         o = o.strip if o.instance_of?(String)
@@ -130,13 +133,13 @@ module ODRL
           o = if o.to_s =~ %r{^\w+:/?/?[^\s]+}
                 RDF::URI.new(o.to_s)
               elsif o.to_s =~ /^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d/
-                RDF::Literal.new(o.to_s, datatype: RDF::XSD.date)
+                RDF::Literal.new(o.to_s, datatype: (RDF::XSD.date if skip_type_or_language == false))
               elsif o.to_s =~ /^\d\.\d/
-                RDF::Literal.new(o.to_s, datatype: RDF::XSD.float)
+                RDF::Literal.new(o.to_s, datatype: (RDF::XSD.float if skip_type_or_language == false))
               elsif o.to_s =~ /^[0-9]+$/
-                RDF::Literal.new(o.to_s, datatype: RDF::XSD.int)
+                RDF::Literal.new(o.to_s, datatype: (RDF::XSD.int if skip_type_or_language == false))
               else
-                RDF::Literal.new(o.to_s, language: :en)
+                RDF::Literal.new(o.to_s, language: (:en if skip_type_or_language == false))
               end
         end
 

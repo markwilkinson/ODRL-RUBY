@@ -4,7 +4,7 @@ p = ODRL::Profile::Builder.new(
     uri: "https://example.org/myprofiles/grp",
     title: "ODRL Profile for Germplasm resources",
     description: "There are some properties and comparisons that only make sense in the Germplasm expert domain",
-    author: "Mark D Wilkinson",
+    authors: ["Mark D Wilkinson"],
     version: 0.1,
     license: "https://creativecommons.org/licenses/by/4.0/"
 )
