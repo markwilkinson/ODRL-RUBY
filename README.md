@@ -6,17 +6,18 @@ This is a gem to build ODRL records, and serialize them. Does not cover the full
 
 Add this line to your application's Gemfile:
 
-```ruby
+```sh
 gem 'odrl-ruby'
 ```
 
 And then execute:
 
-    $ bundle install
+```sh
+$ bundle install
 
-Or install it yourself as:
-
-    $ gem install odrl-ruby
+# Or install it yourself as:
+$ gem install odrl-ruby
+```
 
 ## Usage
 
@@ -24,7 +25,7 @@ Or install it yourself as:
 
 # Build Policy:
 
-```
+```ruby
 require 'odrl/ruby'
 
 # an offer to toshiaki from mark to use the polyA resource during the biohackathon
@@ -71,7 +72,7 @@ puts result
 
 # Build Profile:
 
-```
+```ruby
 require 'odrl/profile/builder'
 
 p = ODRL::Profile::Builder.new(

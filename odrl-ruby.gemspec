@@ -5,8 +5,8 @@ require_relative "lib/odrl/odrl/version"
 Gem::Specification.new do |spec|
   spec.name = "odrl-ruby"
   spec.version = ODRL::ODRL::VERSION
-  spec.authors = ["Mark Wilkinson"]
-  spec.email = ["markw@illuminae.com"]
+  spec.authors = ["Mark Wilkinson", "Oussama Benhamed"]
+  spec.email = ["markw@illuminae.com", "benhamedoussamamed@gmail.com"]
 
   spec.summary = "builds ODRL files."
   spec.description = "A builder for ODRL files. Does basic validation against core ODRL vocabularies. Has a Builder that allows you to create ODRL Profiles to extend the core vocabulary.  DOES NOT validate against a profile.  DOES NOT cover the full ODRL specificaiton, only the bits that I needed!"
